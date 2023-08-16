@@ -4,20 +4,22 @@ import { z } from 'zod';
 import {
   generateCoverLetter,
   generateCoverLetterGET,
+  testPdf,
 } from './cover-letter.handlers';
 import { validateRequest } from '../../middlewares';
-import { UrlInput } from './cover-letter.model';
+import { UserUploadData } from './cover-letter.model';
 
 const coverLetterRouter = express.Router();
 
 coverLetterRouter.post(
   '/',
-  validateRequest({ body: UrlInput }),
+  validateRequest({ body: UserUploadData }),
   generateCoverLetter
 );
+coverLetterRouter.get('/test', testPdf);
 coverLetterRouter.get(
   '/',
-  validateRequest({ query: UrlInput }),
+  validateRequest({ query: UserUploadData }),
   generateCoverLetterGET
 );
 

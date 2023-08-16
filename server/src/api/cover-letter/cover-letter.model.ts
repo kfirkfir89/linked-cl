@@ -2,20 +2,29 @@ import z from 'zod';
 // import { WithId } from 'mongodb';
 // import { db } from '../../db';
 
-export const UrlInput = z.object({
+export const UserUploadData = z.object({
   url: z.string().min(10),
 });
-export type UrlInput = z.infer<typeof UrlInput>;
+export type UserUploadData = z.infer<typeof UserUploadData>;
 
-export const JobDescription = z.object({
+export const JobInformation = z.object({
   title: z.string().min(1),
+  company: z.string().min(1),
   description: z.string().min(10),
 });
-export type JobDescription = z.infer<typeof JobDescription>;
+export type JobInformation = z.infer<typeof JobInformation>;
+
+export const Job = z.object({
+  link: z.string().min(10),
+  linkedInJobId: z.string().min(6),
+  title: z.string().min(1),
+  company: z.string().min(1),
+  description: z.string().min(10),
+});
+export type Job = z.infer<typeof Job>;
 
 // export const CoverLetter = z.object({
-//   title: z.string().min(1),
-//   description: z.string().min(10),
+//   'cover-letter': z.instanceof(File),
 // });
 // export type CoverLetter = z.infer<typeof CoverLetter>;
 

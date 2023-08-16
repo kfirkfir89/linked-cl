@@ -33,5 +33,5 @@ module.exports = {
   env: {
     jest: true,
   },
-  ignorePatterns: ['package.json'],
+  ignorePatterns: ['package.json', 'src/index.d.ts'],
 };

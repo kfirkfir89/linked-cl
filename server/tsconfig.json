@@ -2,8 +2,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "sourceMap": true,
-    "target": "esnext",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
@@ -13,10 +13,12 @@
   },
   "include": [
     "./.eslintrc.cjs",
+    "src/index.d.ts",
+    "./*",
     "./*.js",
     "./*.ts",
     "src/**/*.ts",
-    "test/**/*.ts",
+    "test/**/*.ts", "src/services/adobe-api/extract-text-from-pdf/index.js",
   ],
 
 }
