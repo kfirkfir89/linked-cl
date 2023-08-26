@@ -29,7 +29,8 @@ async function scripteJobInformation(page: Page) {
   });
 }
 
-const getJobInformation = async (jobUrl: string) => {
+async function getJobInformation(jobUrl: string) {
+  console.log('STARTTTTTTTTTTTTTTTTTTTTT JOBBBBBB');
   const url = createPuppeteerUrl(jobUrl);
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
@@ -40,8 +41,8 @@ const getJobInformation = async (jobUrl: string) => {
     throw new Error('Something went wrong try again.');
   }
 
-  browser.close();
+  await browser.close();
   return jobInformation;
-};
+}
 
 export { getJobInformation };

@@ -33,5 +33,9 @@ module.exports = {
   env: {
     jest: true,
   },
-  ignorePatterns: ['package.json', 'src/index.d.ts'],
+  ignorePatterns: [
+    'package.json',
+    'src/index.d.ts',
+    './src/services/adobe-api/*',
+  ],
 };

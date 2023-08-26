@@ -17,8 +17,9 @@
     "./*",
     "./*.js",
     "./*.ts",
+    "src/**/*.js",
     "src/**/*.ts",
-    "test/**/*.ts", "src/services/adobe-api/extract-text-from-pdf/index.js",
+    "test/**/*.ts", "src/services/adobe-api/create-pdf-from-json/index.js", 
   ],
 
 }

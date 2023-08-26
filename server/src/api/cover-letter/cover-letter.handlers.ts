@@ -1,98 +1,55 @@
-import fsp from 'fs/promises';
-import fs from 'fs';
 import path from 'path';
-import unzipper from 'unzipper';
+import fs from 'fs';
 import { NextFunction, Request, Response } from 'express';
-import pdf from 'pdf-parse';
+import PDFDocument from 'pdfkit';
 import { getJobInformation } from '../../utils/getJobDescription';
 import { JobInformation, UserUploadData } from './cover-letter.model';
-import { extractTextFromPdf } from '../../services/adobe-api';
+import {
+  extractTextFromPdf,
+  createPdfFromJson,
+} from '../../services/adobe-api';
+import {
+  extractFromZip,
+  fsExists,
+  getJsonObject,
+} from '../../utils/extractFromZip';
+import { createCoverLetterJson } from '../../services/chatgpt';
+import { jsonToText, structureText } from '../../utils/textHandlers';
 
-async function fsExists(filePath: string): Promise<boolean> {
-  try {
-    await fsp.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function jsonToText(outputFileName: string) {
+type CoverLetter = {
+  personalDetails: {
+    name: string;
+    address: string;
+    email: string;
+    phone: string;
+  };
+  introduction: {
+    hiringManager: string;
+    companyName: string;
+    positionInterestedIn: string;
+  };
+  body: {
+    content: string;
+  };
+  conclusion: {
+    thankYouNote: string;
+  };
+};
+async function getJsonAndText(outputFileName: string) {
   const filePath = path.join(
     __dirname,
-    `../../../output/${outputFileName}.zip`
+    `../../../output-${outputFileName}/${outputFileName}.zip`
   );
 
-  if (await fsExists(filePath)) {
-    const stream = fs.createReadStream(filePath);
-    await new Promise((resolve, reject) => {
-      stream
-        .pipe(unzipper.Extract({ path: 'output/' }))
-        .on('close', resolve)
-        .on('error', reject);
-    });
-    await fsp.rename(
-      'output/structuredData.json',
-      `output/${outputFileName}.json`
-    );
-    const jsonData = await fsp.readFile(
-      `output/${outputFileName}.json`,
-      'utf-8'
-    );
-    const jsonObject = JSON.parse(jsonData);
-
-    let extractedText = '';
-    jsonObject.elements.forEach((element: any, index: number) => {
-      if (element.Text) {
-        console.log('Current:', element.Text);
-        if (index > 0) {
-          console.log('Previous:', jsonObject.elements[index - 1].Text);
-        }
-        if (
-          element.Path.includes('H1') ||
-          element.Path.includes('H2') ||
-          element.Path.includes('H3') ||
-          element.Path.includes('Summary') ||
-          element.Path.includes('Skills') ||
-          element.Path.includes('Technical Experience') ||
-          element.Path.includes('Education')
-        ) {
-          extractedText += '\n\n';
-        }
-        if (element.Text.includes('•')) {
-          extractedText += `\n${element.Text} `;
-        }
-        // if (index > 0 && jsonObject.elements[index - 1].Text.includes('•')) {
-        //   extractedText += `${element.Text} `;
-        // }
-        if (
-          element.Path.includes('LI') &&
-          (!jsonObject.elements[index - 1] ||
-            (jsonObject.elements[index - 1] &&
-              jsonObject.elements[index - 1].Text.includes('•')))
-        ) {
-          extractedText += '\n';
-        } else {
-          extractedText += ' ';
-        }
-        extractedText += element.Text;
-      }
-    });
-    return extractedText.trim();
+  if (fs.existsSync(filePath)) {
+    await extractFromZip(filePath);
+    const jsonObject = await getJsonObject(outputFileName);
+    const textData = jsonToText(jsonObject);
+    return { textData, jsonObject };
   }
   throw new Error('File does not exist');
 }
 
-async function deleteFiles(files: string[]) {
-  for (let i = 0; i < files.length; i + 1) {
-    const outputFilePath = path.join(
-      __dirname,
-      `../../../output/${files[i].trim()}`
-    );
-    // eslint-disable-next-line no-await-in-loop
-    await fsp.unlink(outputFilePath);
-  }
-}
 export async function testPdf(
   req: Request,
   res: Response<{ data: string }>,
@@ -105,22 +62,41 @@ export async function testPdf(
       '../../assets/kfir_avraham _fullstack_CV.pdf'
     );
     const outputFileName = path.basename(filePath, '.pdf');
-    const outputDir = path.join(__dirname, '../../../output');
+    const jsonPath = path.join(
+      __dirname,
+      `../../../output/${outputFileName}.json`
+    );
+    const url =
+      'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3665395871';
 
-    // const dataBuffer = fs.readFileSync(filePath);
-    // const data = await pdf(dataBuffer).then(function (pdfResult) {
-    //   return pdfResult.text;
-    // });
-    await extractTextFromPdf(filePath, outputFileName);
-    const data = await jsonToText(outputFileName);
-    await fsp.rmdir(outputDir, { recursive: true });
+    const [_, jobObj] = await Promise.all([
+      extractTextFromPdf(filePath, outputFileName),
+      getJobInformation(url),
+    ]);
+    const job = `${jobObj.company} + ${jobObj.title} + ${jobObj.description}`;
 
+    const { textData } = await getJsonAndText(outputFileName);
+
+    const coverLetterJson = await createCoverLetterJson(job, textData);
+    const coverLetter: CoverLetter = JSON.parse(coverLetterJson);
+    console.log('coverLetter:', coverLetter);
+    coverLetter.body.content = structureText(coverLetter.body.content);
+    coverLetter.conclusion.thankYouNote = structureText(
+      coverLetter.conclusion.thankYouNote
+    );
+    const data = coverLetter.body.content;
+    console.log('data:', data.length);
+
+    // await stringToPdf(coverLetter.object, `output/${outputFileName}.pdf`);
+    // await createPdfFromJson(textData);
+
+    // const outputDir = path.join(__dirname, '../../../output');
+    // await fsp.rmdir(outputDir, { recursive: true });
     // const files = await fsp.readdir(outputDir);
     res.status(200);
     res.json({ data });
     // next(await deleteFiles(files));
   } catch (error) {
-    console.log('Error processing the PDF:', error);
     next(error);
   }
 }

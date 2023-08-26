@@ -1,9 +1,9 @@
-import path from 'path';
 import PDFServicesSdk from '@adobe/pdfservices-node-sdk';
 
 async function extractTextFromPdf(filePath, outputFileName) {
+  console.log('STARTTTTTTTTTTTTTTTTTTTTT EXTRACT');
   const { PDF_SERVICES_CLIENT_ID, PDF_SERVICES_CLIENT_SECRET } = process.env;
-  const outputPath = `output/${outputFileName}.zip`;
+  const outputPath = `output-${outputFileName}/${outputFileName}.zip`;
 
   try {
     // Initial setup, create credentials instance.
@@ -33,10 +33,10 @@ async function extractTextFromPdf(filePath, outputFileName) {
     );
 
     // Set operation input from a source file.
-    await extractPDFOperation.setInput(input);
+    extractPDFOperation.setInput(input);
 
     // Set options
-    await extractPDFOperation.setOptions(options);
+    extractPDFOperation.setOptions(options);
 
     await extractPDFOperation
       .execute(executionContext)
