@@ -1,9 +1,13 @@
 import path from 'path';
 import fs from 'fs';
+import fsp from 'fs/promises';
 import { NextFunction, Request, Response } from 'express';
 import PDFDocument from 'pdfkit';
-import { getJobInformation } from '../../utils/getJobDescription';
-import { JobInformation, UserUploadData } from './cover-letter.model';
+import {
+  JobInformation,
+  getJobInformation,
+} from '../../utils/getJobDescription';
+import { UserUploadData } from './cover-letter.model';
 import {
   extractTextFromPdf,
   createPdfFromJson,
@@ -15,6 +19,9 @@ import {
 } from '../../utils/extractFromZip';
 import { createCoverLetterJson } from '../../services/chatgpt';
 import { jsonToText, structureText } from '../../utils/textHandlers';
+import { summrizeUserCv } from '../../services/chatgpt/summrizeUserCv';
+import { createCoverLetterTemplate } from '../../services/chatgpt/createCoverLetterTemplate';
+import { createCoverLetter } from '../../services/chatgpt/createCoverLetter';
 
 type CoverLetter = {
   personalDetails: {
@@ -43,9 +50,9 @@ async function getJsonAndText(outputFileName: string) {
 
   if (fs.existsSync(filePath)) {
     await extractFromZip(filePath);
-    const jsonObject = await getJsonObject(outputFileName);
-    const textData = jsonToText(jsonObject);
-    return { textData, jsonObject };
+    const cvJson = await getJsonObject(outputFileName);
+    const cvText = jsonToText(cvJson);
+    return { cvJson, cvText };
   }
   throw new Error('File does not exist');
 }
@@ -67,34 +74,31 @@ export async function testPdf(
       `../../../output/${outputFileName}.json`
     );
     const url =
-      'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3665395871';
+      'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3691757943';
 
-    const [_, jobObj] = await Promise.all([
+    const [_, cvTemplate] = await Promise.all([
       extractTextFromPdf(filePath, outputFileName),
-      getJobInformation(url),
+      getJobInformation(url).then((jobInformation) =>
+        createCoverLetterTemplate(jobInformation)
+      ),
     ]);
-    const job = `${jobObj.company} + ${jobObj.title} + ${jobObj.description}`;
+    console.log('cvTemplate:', cvTemplate);
+    const { cvJson, cvText } = await getJsonAndText(outputFileName);
 
-    const { textData } = await getJsonAndText(outputFileName);
+    // const [summrizeCv, cvTemplate] = await Promise.all([
+    //   summrizeUserCv(cvText),
+    //   createCoverLetterTemplate(jobInformation),
+    // ]);
 
-    const coverLetterJson = await createCoverLetterJson(job, textData);
-    const coverLetter: CoverLetter = JSON.parse(coverLetterJson);
-    console.log('coverLetter:', coverLetter);
-    coverLetter.body.content = structureText(coverLetter.body.content);
-    coverLetter.conclusion.thankYouNote = structureText(
-      coverLetter.conclusion.thankYouNote
-    );
-    const data = coverLetter.body.content;
-    console.log('data:', data.length);
+    const cv = await createCoverLetter(cvText, cvTemplate);
 
     // await stringToPdf(coverLetter.object, `output/${outputFileName}.pdf`);
     // await createPdfFromJson(textData);
 
-    // const outputDir = path.join(__dirname, '../../../output');
-    // await fsp.rmdir(outputDir, { recursive: true });
-    // const files = await fsp.readdir(outputDir);
+    const outputDir = path.join(__dirname, `../../../output-${outputFileName}`);
+    await fsp.rmdir(outputDir, { recursive: true });
     res.status(200);
-    res.json({ data });
+    res.json({ data: cv });
     // next(await deleteFiles(files));
   } catch (error) {
     next(error);
