@@ -26,10 +26,15 @@ export type UserUploadData = z.infer<typeof UserUploadData>;
 // });
 // export type Job = z.infer<typeof Job>;
 
-// export const CoverLetter = z.object({
-//   'cover-letter': z.instanceof(File),
-// });
-// export type CoverLetter = z.infer<typeof CoverLetter>;
+export const CoverLetter = z.object({
+  email: z.string(),
+  data: z.object({
+    link: z.string(),
+    linkedInJobId: z.string(),
+    content: z.string(),
+  }),
+});
+export type CoverLetter = z.infer<typeof CoverLetter>;
 
 // export type TodoWithId = WithId<Todo>;
 // export const Todos = db.collection<Todo>('todos');

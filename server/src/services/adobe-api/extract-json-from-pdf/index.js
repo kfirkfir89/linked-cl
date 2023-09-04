@@ -1,6 +1,6 @@
 import PDFServicesSdk from '@adobe/pdfservices-node-sdk';
 
-async function extractTextFromPdf(filePath, outputFileName) {
+async function extractJsonFromPdf(filePath, outputFileName) {
   console.log('STARTTTTTTTTTTTTTTTTTTTTT EXTRACT');
   const { PDF_SERVICES_CLIENT_ID, PDF_SERVICES_CLIENT_SECRET } = process.env;
   const outputPath = `output-${outputFileName}/${outputFileName}.zip`;
@@ -59,4 +59,4 @@ async function extractTextFromPdf(filePath, outputFileName) {
   }
 }
 
-export { extractTextFromPdf };
+export { extractJsonFromPdf };

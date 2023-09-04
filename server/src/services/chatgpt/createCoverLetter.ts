@@ -5,11 +5,9 @@ type MessagePush = {
   role: 'user' | 'assistant';
   content: string;
 };
-async function createCoverLetter(summrizeCv: string, clTemplate: string) {
-  console.log('STARTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT CoverLetter');
-
+async function createCoverLetter(cvText: string, jobObj: string) {
   const openai = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
   });
 
   let coverLetter: string = '';
@@ -18,18 +16,38 @@ async function createCoverLetter(summrizeCv: string, clTemplate: string) {
     model: 'gpt-4',
     messages: [
       {
-        role: 'user',
-        content: `take the cv/resume i give you and i need you to incorporate information from the cv/resume in the job cover letter template that i provied you.
-        be aware to the following notes:
-        1. prevent from duplicate information that will be seen by the recruiter in the cv/resume.
-        2. incorporate only information that fit the position requerment.
-        3. do a minor changes if you need to describe the candidate abilities.
-        4. cv/resume delimited by double quotes.
-        5. cover letter template delimited by triple quotes.
-        6. output without quotes.
+        role: 'system',
+        content: `You will be provided with candidate cv/resume and a job/position description(object).
+        cv/resume delimited by double quotes.
+        cover letter template delimited by triple quotes.
+        
+        1. Keep the letter concise, targeted, impactful and short.
+        2. The thank you note should be brief.
+        3. max length 500 chars.
 
-        ""${summrizeCv}""
-        """${clTemplate}"""
+           Follow these steps to answer:
+           1. take the cv/resume check for the candidate year of expireance, skills verbal skills.
+           2. take the job/position description and create a cover letter and incorporate the candidate relevante information (
+              notes: 
+                - The thank you note should be brief.
+                - max length 500 chars.
+              ).
+           3. ouput should be in json format in the sollowing structure: 
+              {
+                email: "CANDIDATE_EMAIL",
+                data: {
+                  link: "JOB_URL",
+                  linkedInJobId: "LINKIN_JOB_ID",
+                  content: "COVER_LETTER_CONTENT"
+                }
+              }
+           `,
+      },
+      {
+        role: 'user',
+        content: `
+        ""${cvText}""
+        """${jobObj}"""
       `,
       },
     ],
