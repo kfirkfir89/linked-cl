@@ -28,11 +28,9 @@ export type UserUploadData = z.infer<typeof UserUploadData>;
 
 export const CoverLetter = z.object({
   email: z.string(),
-  data: z.object({
-    link: z.string(),
-    linkedInJobId: z.string(),
-    content: z.string(),
-  }),
+  link: z.string(),
+  linkedInJobId: z.string(),
+  content: z.string(),
 });
 export type CoverLetter = z.infer<typeof CoverLetter>;
 

@@ -7,7 +7,7 @@ type MessagePush = {
 };
 async function createCoverLetter(cvText: string, jobObj: string) {
   const openai = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
   });
 
   let coverLetter: string = '';
@@ -34,12 +34,10 @@ async function createCoverLetter(cvText: string, jobObj: string) {
               ).
            3. ouput should be in json format in the sollowing structure: 
               {
-                email: "CANDIDATE_EMAIL",
-                data: {
-                  link: "JOB_URL",
-                  linkedInJobId: "LINKIN_JOB_ID",
-                  content: "COVER_LETTER_CONTENT"
-                }
+                "email": "CANDIDATE_EMAIL",
+                "link": "JOB_URL",
+                "linkedInJobId": "LINKIN_JOB_ID",
+                "content": "COVER_LETTER_CONTENT"
               }
            `,
       },

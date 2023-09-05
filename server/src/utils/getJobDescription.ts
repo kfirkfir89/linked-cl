@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { createPuppeteerUrl } from './createPuppeteerUrl';
 
 export const JobInformation = z.object({
-  url: z.string().min(10),
   linkedInJobId: z.string().min(6),
+  url: z.string().min(10),
   title: z.string().min(1),
   company: z.string().min(1),
   recruiter: z.string().min(1),

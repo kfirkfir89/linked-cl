@@ -25,7 +25,7 @@ async function fsExists(filePath: string): Promise<boolean> {
 
 async function deleteFiles(outputName: string) {
   const outputDir = path.join(__dirname, `../../../output-${outputName}`);
-  await fsp.rmdir(outputDir, { recursive: true });
+  await fsp.rm(outputDir, { recursive: true });
 }
 
 async function extractedTextFromJson(outputName: string) {
@@ -47,22 +47,32 @@ async function extractedTextFromJson(outputName: string) {
   }
   throw new Error('File does not exist');
 }
-
+// function equalSortsObjects(): boolean {
+//   if (
+//     JSON.stringify(sortOption.sort) === JSON.stringify(prevSortOption.sort) &&
+//     JSON.stringify(sortOption.sizes) === JSON.stringify(prevSortOption.sizes) &&
+//     JSON.stringify(sortOption.colors) === JSON.stringify(prevSortOption.colors)
+//   ) {
+//     return true;
+//   }
+//   return false;
+// }
 export async function testPdf(
   req: Request,
   res: Response<{ data: string }>,
   next: NextFunction
 ) {
   try {
+    // PDF CHECKER GOES HERE <<<<<<-------------------------
     // const filePath = 'https://mozilla.github.io/pdf.js/build/pdf.js';
     const testFile = path.join(
       __dirname,
       '../../assets/kfir_avraham _fullstack_CV.pdf'
     );
-    const outputName = v4();
-
     const url =
       'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3691757943';
+
+    const outputName = v4();
 
     const [_, jobObj] = await Promise.all([
       extractJsonFromPdf(testFile, outputName),
@@ -70,16 +80,25 @@ export async function testPdf(
     ]);
     const cvText = await extractedTextFromJson(outputName);
 
-    const coverLetter: CoverLetter = JSON.parse(
-      await createCoverLetter(cvText, JSON.stringify(jobObj))
-    );
+    const coverLetter = await createCoverLetter(
+      cvText,
+      JSON.stringify(jobObj)
+    ).then((cvJson: string) => {
+      const structured = cvJson
+        .replace(/\n/g, '')
+        .replace(/\t/g, '')
+        .replace(/\r/g, '');
+      console.log('structured:', structured);
+      const cl: CoverLetter = JSON.parse(`${structured}`);
+      return cl;
+    });
 
     // await stringToPdf(coverLetter.object, `output/${outputName}.pdf`);
     // await createPdfFromJson(textData);
 
     await deleteFiles(outputName);
     res.status(200);
-    res.json({ data: structureText(coverLetter.data.content) });
+    res.json({ data: structureText(coverLetter.content) });
     // next(await deleteFiles(files));
   } catch (error) {
     console.log('error:', error);
