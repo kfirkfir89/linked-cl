@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import fsp from 'fs/promises';
+import { Worker, parentPort, workerData } from 'worker_threads';
 import { NextFunction, Request, Response } from 'express';
-import PDFDocument from 'pdfkit';
 import { v4 } from 'uuid';
 import {
   JobInformation,
@@ -47,16 +47,37 @@ async function extractedTextFromJson(outputName: string) {
   }
   throw new Error('File does not exist');
 }
-// function equalSortsObjects(): boolean {
-//   if (
-//     JSON.stringify(sortOption.sort) === JSON.stringify(prevSortOption.sort) &&
-//     JSON.stringify(sortOption.sizes) === JSON.stringify(prevSortOption.sizes) &&
-//     JSON.stringify(sortOption.colors) === JSON.stringify(prevSortOption.colors)
-//   ) {
-//     return true;
-//   }
-//   return false;
-// }
+interface Message {
+  type: string;
+  result?: string;
+}
+
+function runWorkerTask(type: string, outputName: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const p = path.resolve(
+      __dirname,
+      '../../utils/extractTextFromJsonWorker.ts'
+    );
+    const pj = path.resolve(__dirname, './worker.import.js');
+    const worker = new Worker(pj, {
+      workerData: {
+        path: p,
+        type,
+        outputName,
+      },
+    });
+
+    worker.on('message', (message: Message) => {
+      resolve(message.result);
+    });
+
+    worker.on('error', (error: any) => {
+      console.log('Worker error:', error);
+      reject(error);
+    });
+  });
+}
+
 export async function testPdf(
   req: Request,
   res: Response<{ data: string }>,
@@ -73,12 +94,16 @@ export async function testPdf(
       'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3691757943';
 
     const outputName = v4();
-
+    const tick = performance.now();
     const [_, jobObj] = await Promise.all([
       extractJsonFromPdf(testFile, outputName),
       getJobInformation(url),
     ]);
-    const cvText = await extractedTextFromJson(outputName);
+    const tock = performance.now();
+    console.log(`TIMEEEEEEEEEEEEEEEEEEEEEEEEE: ${(tock - tick) / 1000} sec`);
+
+    const cvText = await runWorkerTask('extract_text', outputName);
+    // const cvText = await extractedTextFromJson(outputName);
 
     const coverLetter = await createCoverLetter(
       cvText,
@@ -88,18 +113,13 @@ export async function testPdf(
         .replace(/\n/g, '')
         .replace(/\t/g, '')
         .replace(/\r/g, '');
-      console.log('structured:', structured);
       const cl: CoverLetter = JSON.parse(`${structured}`);
       return cl;
     });
 
-    // await stringToPdf(coverLetter.object, `output/${outputName}.pdf`);
-    // await createPdfFromJson(textData);
-
     await deleteFiles(outputName);
     res.status(200);
     res.json({ data: structureText(coverLetter.content) });
-    // next(await deleteFiles(files));
   } catch (error) {
     console.log('error:', error);
     next(error);

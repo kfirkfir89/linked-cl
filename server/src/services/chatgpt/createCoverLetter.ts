@@ -7,13 +7,13 @@ type MessagePush = {
 };
 async function createCoverLetter(cvText: string, jobObj: string) {
   const openai = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
   });
 
   let coverLetter: string = '';
 
   const chat_response = await openai.chat.completions.create({
-    model: 'gpt-4',
+    model: 'gpt-3.5-turbo',
     messages: [
       {
         role: 'system',
