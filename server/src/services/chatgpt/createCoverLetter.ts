@@ -7,7 +7,7 @@ type MessagePush = {
 };
 async function createCoverLetter(cvText: string, jobObj: string) {
   const openai = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
   });
 
   let coverLetter: string = '';

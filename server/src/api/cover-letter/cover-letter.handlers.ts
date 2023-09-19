@@ -13,6 +13,7 @@ import { extractFromZip } from '../../utils/extractFromZip';
 import { jsonToText, structureText } from '../../utils/textHandlers';
 import { createCoverLetter } from '../../services/chatgpt/createCoverLetter';
 import { extractJsonFromPdf } from '../../services/adobe-api/extract-json-from-pdf';
+import { IExtractWorkerData } from '../../utils/extractTextFromJsonWorker';
 
 async function fsExists(filePath: string): Promise<boolean> {
   try {
@@ -52,15 +53,23 @@ interface Message {
   result?: string;
 }
 
-function runWorkerTask(type: string, outputName: string): Promise<any> {
+// eslint-disable-next-line @typescript-eslint/no-shadow
+function createWorker<T>(script: string, workerData: T) {
+  return new Worker(script, { workerData });
+}
+function extractedTextFromJsonWorker(
+  type: string,
+  outputName: string
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const p = path.resolve(
       __dirname,
       '../../utils/extractTextFromJsonWorker.ts'
     );
     const pj = path.resolve(__dirname, './worker.import.js');
-    const worker = new Worker(pj, {
-      workerData: {
+
+    const worker = createWorker<IExtractWorkerData>(pj, {
+      data: {
         path: p,
         type,
         outputName,
@@ -68,10 +77,13 @@ function runWorkerTask(type: string, outputName: string): Promise<any> {
     });
 
     worker.on('message', (message: Message) => {
-      resolve(message.result);
+      if (message.result) {
+        resolve(message.result);
+      }
+      resolve('no result ');
     });
 
-    worker.on('error', (error: any) => {
+    worker.on('error', (error: Error) => {
       console.log('Worker error:', error);
       reject(error);
     });
@@ -102,7 +114,10 @@ export async function testPdf(
     const tock = performance.now();
     console.log(`TIMEEEEEEEEEEEEEEEEEEEEEEEEE: ${(tock - tick) / 1000} sec`);
 
-    const cvText = await runWorkerTask('extract_text', outputName);
+    const cvText = await extractedTextFromJsonWorker(
+      'extract_text',
+      outputName
+    );
     // const cvText = await extractedTextFromJson(outputName);
 
     const coverLetter = await createCoverLetter(

@@ -4,15 +4,18 @@ import { parentPort, workerData } from 'worker_threads';
 import { extractFromZip } from './extractFromZip';
 import { jsonToText } from './textHandlers';
 
-console.log('workerDataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:', workerData);
-interface Message {
-  path: string;
-  type: string;
-  outputName?: string;
+export interface IExtractWorkerData {
+  data: {
+    path: string;
+    type: string;
+    outputName?: string;
+  };
 }
+
+const typedWorkerData = workerData as IExtractWorkerData;
+
 async function extractedTextFromJson(outputName: string) {
   const zipPath = path.join(`output-${outputName}/${outputName}.zip`);
-  console.log('zipPathhhhhhhhhhhhhhh:', zipPath);
   if (fs.existsSync(zipPath)) {
     await extractFromZip(zipPath);
 
@@ -29,10 +32,13 @@ async function extractedTextFromJson(outputName: string) {
 
 (async () => {
   try {
-    if (workerData.type === 'extract_text') {
-      console.log('outputName:', workerData.outputName);
-      const result = await extractedTextFromJson(workerData.outputName);
-      console.log('result:', result);
+    if (
+      typedWorkerData.data.type === 'extract_text' &&
+      typedWorkerData.data.outputName
+    ) {
+      const result = await extractedTextFromJson(
+        typedWorkerData.data.outputName
+      );
       parentPort?.postMessage({ type: 'extract_text', result });
     }
   } catch (error) {
