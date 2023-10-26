@@ -90,7 +90,7 @@ function extractedTextFromJsonWorker(
   });
 }
 
-export async function testPdf(
+export async function generateCoverLetter(
   req: Request,
   res: Response<{ data: string }>,
   next: NextFunction
@@ -129,6 +129,7 @@ export async function testPdf(
         .replace(/\t/g, '')
         .replace(/\r/g, '');
       const cl: CoverLetter = JSON.parse(`${structured}`);
+      console.log('cl:', cl);
       return cl;
     });
 
@@ -137,36 +138,6 @@ export async function testPdf(
     res.json({ data: structureText(coverLetter.content) });
   } catch (error) {
     console.log('error:', error);
-    next(error);
-  }
-}
-export async function generateCoverLetter(
-  req: Request<{}, JobInformation, UserUploadData, UserUploadData>,
-  res: Response<JobInformation>,
-  next: NextFunction
-) {
-  try {
-    const { url } = req.body;
-    const job = await getJobInformation(url);
-    res.status(201);
-    res.json(job);
-  } catch (error) {
-    next(error);
-  }
-}
-
-// testing function
-export async function generateCoverLetterGET(
-  req: Request<{}, JobInformation, UserUploadData, UserUploadData>,
-  res: Response<JobInformation>,
-  next: NextFunction
-) {
-  try {
-    const { url } = req.query;
-    const job = await getJobInformation(url);
-    res.status(201);
-    res.json(job);
-  } catch (error) {
     next(error);
   }
 }

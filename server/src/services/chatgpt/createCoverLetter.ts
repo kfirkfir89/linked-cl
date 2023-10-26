@@ -7,9 +7,8 @@ type MessagePush = {
 };
 async function createCoverLetter(cvText: string, jobObj: string) {
   const openai = new OpenAI({
-    apiKey: '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',
+    apiKey: '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',
   });
-
   let coverLetter: string = '';
 
   const chat_response = await openai.chat.completions.create({
@@ -50,6 +49,7 @@ async function createCoverLetter(cvText: string, jobObj: string) {
       },
     ],
   });
+
   if (chat_response.choices[0].message.content) {
     coverLetter = chat_response.choices[0].message.content;
   }
