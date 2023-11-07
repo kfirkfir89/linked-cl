@@ -49,7 +49,7 @@ async function getJobInformation(jobUrl: string) {
   const { linkedInJobId, url } = createPuppeteerUrl(jobUrl);
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto('https://www.linkedin.com/jobs/view/3691757943/');
+  await page.goto(url);
 
   const scriptedInfo: Omit<JobInformation, 'url' | 'linkedInJobId'> =
     await scripteJobInformation(page);

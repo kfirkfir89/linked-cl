@@ -5,6 +5,8 @@ import { ZodError } from 'zod';
 import ErrorResponse from './interfaces/ErrorResponse';
 import RequestValidators from './interfaces/RequestValidators';
 
+export type MulterFile = Express.Multer.File;
+
 export function validateRequest(validators: RequestValidators) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {

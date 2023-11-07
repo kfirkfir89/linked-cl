@@ -24,9 +24,8 @@ async function fsExists(filePath: string): Promise<boolean> {
   }
 }
 
-async function deleteFiles(outputName: string) {
-  const outputDir = path.join(__dirname, `../../../output-${outputName}`);
-  await fsp.rm(outputDir, { recursive: true });
+async function deleteFiles(filePath: string) {
+  await fsp.rm(filePath, { recursive: true });
 }
 
 async function extractedTextFromJson(outputName: string) {
@@ -90,84 +89,78 @@ function extractedTextFromJsonWorker(
   });
 }
 
+async function processPDFAndCreateCoverLetter(
+  cvFilePath: string,
+  linkedInUrl: string
+): Promise<CoverLetter> {
+  const outputName = v4();
+  const tick = performance.now();
+  const [_, jobObj] = await Promise.all([
+    extractJsonFromPdf(cvFilePath, outputName),
+    getJobInformation(linkedInUrl),
+  ]);
+  const tock = performance.now();
+  console.log(`TIMEEEEEEEEEEEEEEEEEEEEEEEEE: ${(tock - tick) / 1000} sec`);
+
+  const cvText = await extractedTextFromJsonWorker('extract_text', outputName);
+  // const cvText = await extractedTextFromJson(outputName);
+
+  const coverLetter = await createCoverLetter(
+    cvText,
+    JSON.stringify(jobObj)
+  ).then((cvJson: string) => {
+    const structured = cvJson
+      .replace(/\n/g, '')
+      .replace(/\t/g, '')
+      .replace(/\r/g, '');
+    const cl: CoverLetter = JSON.parse(`${structured}`);
+    console.log('cl:', cl);
+    return cl;
+  });
+
+  const outputJsonPath = path.join(__dirname, `../../../output-${outputName}`);
+
+  await deleteFiles(outputJsonPath);
+  await deleteFiles(cvFilePath);
+  return coverLetter;
+}
+
+async function saveCVFile(
+  file: Express.Multer.File,
+  uploadsDir: string
+): Promise<string> {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  const fileName = file.originalname.endsWith('.pdf')
+    ? file.originalname
+    : `${file.originalname}.pdf`;
+  const filePath = path.join(uploadsDir, fileName);
+  fs.writeFileSync(filePath, file.buffer);
+  return filePath;
+}
+
 export async function generateCoverLetter(
   req: Request,
   res: Response<{ data: string }>,
   next: NextFunction
 ) {
-  console.log('HEREEEEEEEEEEEEEEE');
-  if (req.file) {
+  if (req.file && req.file.mimetype === 'application/pdf') {
+    const jobUrl: string = req.body.url;
     try {
-      const uploadsDir = path.join(__dirname, '../../../uploads'); // Ensure this path is correct
-      const fileBuffer = req.file.buffer;
-
-      // Ensure the uploads directory exists
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-        console.log('Created uploads directory');
-      }
-
-      // Write the buffer to a file
-      const fileName = req.file.originalname.endsWith('.pdf')
-        ? req.file.originalname
-        : `${req.file.originalname}.pdf`;
-      const filePath = path.join(uploadsDir, fileName);
-      console.log('File path:', filePath);
-      // Write the buffer to a file
-      fs.writeFileSync(filePath, req.file.buffer);
-      // Respond with the path or some other success message
-      res.status(200).json({ data: filePath });
+      const uploadsDir = path.join(__dirname, '../../../uploads');
+      const savedCVFilePath = await saveCVFile(req.file, uploadsDir);
+      const coverLetter = await processPDFAndCreateCoverLetter(
+        savedCVFilePath,
+        jobUrl
+      );
+      res.status(200);
+      res.json({ data: structureText(coverLetter.content) });
     } catch (error) {
-      console.error('Error saving file:', error);
-      res.status(500).json({ data: (error as Error).message });
+      console.log('error:', error);
+      next(error);
     }
+  } else {
+    throw new Error('No file, or pdf not exsist');
   }
-  return { data: 'no file' };
 }
-
-// try {
-//   // PDF CHECKER GOES HERE <<<<<<-------------------------
-//   // const filePath = 'https://mozilla.github.io/pdf.js/build/pdf.js';
-//   const testFile = path.join(
-//     __dirname,
-//     '../../assets/kfir_avraham _fullstack_CV.pdf'
-//   );
-//   const url =
-//     'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3691757943';
-
-//   const outputName = v4();
-//   const tick = performance.now();
-//   const [_, jobObj] = await Promise.all([
-//     extractJsonFromPdf(testFile, outputName),
-//     getJobInformation(url),
-//   ]);
-//   const tock = performance.now();
-//   console.log(`TIMEEEEEEEEEEEEEEEEEEEEEEEEE: ${(tock - tick) / 1000} sec`);
-
-//   const cvText = await extractedTextFromJsonWorker(
-//     'extract_text',
-//     outputName
-//   );
-//   // const cvText = await extractedTextFromJson(outputName);
-
-//   const coverLetter = await createCoverLetter(
-//     cvText,
-//     JSON.stringify(jobObj)
-//   ).then((cvJson: string) => {
-//     const structured = cvJson
-//       .replace(/\n/g, '')
-//       .replace(/\t/g, '')
-//       .replace(/\r/g, '');
-//     const cl: CoverLetter = JSON.parse(`${structured}`);
-//     console.log('cl:', cl);
-//     return cl;
-//   });
-
-//   await deleteFiles(outputName);
-//   res.status(200);
-//   res.json({ data: structureText(coverLetter.content) });
-// } catch (error) {
-//   console.log('error:', error);
-//   next(error);
-// }
-// }
