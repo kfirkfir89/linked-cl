@@ -1,6 +1,6 @@
 import puppeteer, { Page } from 'puppeteer';
 import { z } from 'zod';
-import { createPuppeteerUrl } from './createPuppeteerUrl';
+import { PuppeteerLink, createPuppeteerUrl } from './createPuppeteerUrl';
 
 export const JobInformation = z.object({
   linkedInJobId: z.string().min(6),
@@ -45,22 +45,20 @@ async function scripteJobInformation(page: Page) {
   });
 }
 
-async function getJobInformation(jobUrl: string) {
-  const { linkedInJobId, url } = createPuppeteerUrl(jobUrl);
+async function getJobInformation(linkedInUrlDataObj: PuppeteerLink) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto(url);
+  await page.goto(linkedInUrlDataObj.url);
 
-  const scriptedInfo: Omit<JobInformation, 'url' | 'linkedInJobId'> =
+  const scriptedJobInformation: Omit<JobInformation, 'url' | 'linkedInJobId'> =
     await scripteJobInformation(page);
-  if (!scriptedInfo) {
+  if (!scriptedJobInformation) {
     throw new Error('Something went wrong try again.');
   }
 
   const jobInformation: JobInformation = {
-    linkedInJobId,
-    url,
-    ...scriptedInfo,
+    ...linkedInUrlDataObj,
+    ...scriptedJobInformation,
   };
 
   await browser.close();

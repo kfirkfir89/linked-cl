@@ -1,12 +1,19 @@
+interface UploadFileProps {
+  onFileSelect: (file: File) => void;
+}
 
-const UploadFile = () => {
+const UploadFile = ({ onFileSelect }: UploadFileProps) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      onFileSelect(e.target.files[0]); // Pass the selected file to parent
+    }
+  };
+
   return (
-    <div className="">
-      <input type="file" className="file-input file-input-bordered file-input-success w-full max-w-xs" />
-
-      <button className="btn-success btn">Upload</button>
+    <div className="flex flex-col">
+      <input type="file" accept=".pdf" onChange={handleFileChange} className="file-input file-input-bordered file-input-success w-full max-w-xs" />
     </div>
   );
-}
+};
 
 export default UploadFile;

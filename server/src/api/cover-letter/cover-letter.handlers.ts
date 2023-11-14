@@ -14,6 +14,10 @@ import { jsonToText, structureText } from '../../utils/textHandlers';
 import { createCoverLetter } from '../../services/chatgpt/createCoverLetter';
 import { extractJsonFromPdf } from '../../services/adobe-api/extract-json-from-pdf';
 import { IExtractWorkerData } from '../../utils/extractTextFromJsonWorker';
+import {
+  PuppeteerLink,
+  createPuppeteerUrl,
+} from '../../utils/createPuppeteerUrl';
 
 async function fsExists(filePath: string): Promise<boolean> {
   try {
@@ -91,13 +95,13 @@ function extractedTextFromJsonWorker(
 
 async function processPDFAndCreateCoverLetter(
   cvFilePath: string,
-  linkedInUrl: string
+  linkedInUrlDataObj: PuppeteerLink
 ): Promise<CoverLetter> {
   const outputName = v4();
   const tick = performance.now();
   const [_, jobObj] = await Promise.all([
     extractJsonFromPdf(cvFilePath, outputName),
-    getJobInformation(linkedInUrl),
+    getJobInformation(linkedInUrlDataObj),
   ]);
   const tock = performance.now();
   console.log(`TIMEEEEEEEEEEEEEEEEEEEEEEEEE: ${(tock - tick) / 1000} sec`);
@@ -113,7 +117,7 @@ async function processPDFAndCreateCoverLetter(
       .replace(/\n/g, '')
       .replace(/\t/g, '')
       .replace(/\r/g, '');
-    const cl: CoverLetter = JSON.parse(`${structured}`);
+    const cl: CoverLetter = JSON.parse(`${cvJson}`);
     console.log('cl:', cl);
     return cl;
   });
@@ -148,16 +152,17 @@ export async function generateCoverLetter(
   if (req.file && req.file.mimetype === 'application/pdf') {
     const jobUrl: string = req.body.url;
     try {
+      const linkedInUrlDataObj = createPuppeteerUrl(jobUrl);
       const uploadsDir = path.join(__dirname, '../../../uploads');
       const savedCVFilePath = await saveCVFile(req.file, uploadsDir);
       const coverLetter = await processPDFAndCreateCoverLetter(
         savedCVFilePath,
-        jobUrl
+        linkedInUrlDataObj
       );
       res.status(200);
       res.json({ data: structureText(coverLetter.content) });
     } catch (error) {
-      console.log('error:', error);
+      console.log('errorrrrrrrrrrrrrrrrrrrrrrrrrrr:', error);
       next(error);
     }
   } else {

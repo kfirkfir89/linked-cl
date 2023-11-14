@@ -50,7 +50,8 @@ module.exports = {
     'react/display-name': 0,
     '@typescript-eslint/no-unused-expressions': 0,
     'no-plusplus': 0,
-    // '@typescript-eslint/no-floating-promises': 'error',
+    "consistent-return": "off",
+    '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-unused-vars': 0,
     'no-underscore-dangle': 0,
     'prettier/prettier': [
