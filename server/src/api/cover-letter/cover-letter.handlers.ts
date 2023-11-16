@@ -32,6 +32,21 @@ async function deleteFiles(filePath: string) {
   await fsp.rm(filePath, { recursive: true });
 }
 
+async function saveCVFile(
+  file: Express.Multer.File,
+  uploadsDir: string
+): Promise<string> {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  const fileName = file.originalname.endsWith('.pdf')
+    ? file.originalname
+    : `${file.originalname}.pdf`;
+  const filePath = path.join(uploadsDir, fileName);
+  fs.writeFileSync(filePath, file.buffer);
+  return filePath;
+}
+
 async function extractedTextFromJson(outputName: string) {
   const zipPath = path.join(
     __dirname,
@@ -127,21 +142,6 @@ async function processPDFAndCreateCoverLetter(
   await deleteFiles(outputJsonPath);
   await deleteFiles(cvFilePath);
   return coverLetter;
-}
-
-async function saveCVFile(
-  file: Express.Multer.File,
-  uploadsDir: string
-): Promise<string> {
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-  const fileName = file.originalname.endsWith('.pdf')
-    ? file.originalname
-    : `${file.originalname}.pdf`;
-  const filePath = path.join(uploadsDir, fileName);
-  fs.writeFileSync(filePath, file.buffer);
-  return filePath;
 }
 
 export async function generateCoverLetter(

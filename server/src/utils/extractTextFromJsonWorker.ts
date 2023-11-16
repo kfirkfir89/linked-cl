@@ -1,8 +1,5 @@
-import path from 'path';
-import fs from 'fs';
 import { parentPort, workerData } from 'worker_threads';
-import { extractFromZip } from './extractFromZip';
-import { jsonToText } from './textHandlers';
+import { extractedTextFromJson } from './extractedTextFromJson';
 
 export interface IExtractWorkerData {
   data: {
@@ -13,22 +10,6 @@ export interface IExtractWorkerData {
 }
 
 const typedWorkerData = workerData as IExtractWorkerData;
-
-async function extractedTextFromJson(outputName: string) {
-  const zipPath = path.join(`output-${outputName}/${outputName}.zip`);
-  if (fs.existsSync(zipPath)) {
-    await extractFromZip(zipPath);
-
-    const jsonFIle = fs.readFileSync(
-      `output-${outputName}/structuredData.json`,
-      'utf-8'
-    );
-    const jsonObject = await JSON.parse(jsonFIle);
-    const cvText = jsonToText(jsonObject);
-    return cvText;
-  }
-  throw new Error('File does not exist');
-}
 
 (async () => {
   try {

@@ -1,11 +1,13 @@
 interface LinkInputProps {
+  value: string,
   onLinkChange: (url: string) => void;
 }
 
-const LinkInput = ({ onLinkChange }: LinkInputProps) => {
+const LinkInput = ({ onLinkChange, value }: LinkInputProps) => {
   return (
     <div className="link-input">
       <input
+        value={value}
         className="input-primary"
         name="link"
         type="text"

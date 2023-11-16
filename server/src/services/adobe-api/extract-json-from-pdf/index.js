@@ -55,7 +55,6 @@ async function extractJsonFromPdf(filePath, outputFileName) {
       });
   } catch (err) {
     throw new Error(err);
-    // console.log('Exception encountered while executing operation', err);
   }
 }
 

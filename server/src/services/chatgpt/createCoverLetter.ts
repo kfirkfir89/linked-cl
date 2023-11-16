@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 
 const { OPENAI_API_KEY } = process.env;
+
 type MessagePush = {
   role: 'user' | 'assistant';
   content: string;
@@ -22,14 +23,14 @@ async function createCoverLetter(cvText: string, jobObj: string) {
         
         1. Keep the letter concise, targeted, impactful and short.
         2. The thank you note should be brief.
-        3. max length 500 chars.
+        3. max length 300 chars.
 
            Follow these steps to answer:
            1. take the cv/resume check for the candidate year of expireance, skills verbal skills.
            2. take the job/position description and create a cover letter and incorporate the candidate relevante information (
               notes: 
                 - The thank you note should be brief.
-                - max length 500 chars.
+                - max length 300 chars.
               ).
            3. ouput should be in json format in the sollowing structure: 
               {
