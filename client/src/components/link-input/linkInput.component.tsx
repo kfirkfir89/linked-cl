@@ -5,13 +5,16 @@ interface LinkInputProps {
 
 const LinkInput = ({ onLinkChange, value }: LinkInputProps) => {
   return (
-    <div className="link-input">
+    <div className="form-control w-full max-w-xs">
+      <label className="label font-medium">
+        <span className="label-text">LinkedIn Job URL</span>
+      </label>
       <input
         value={value}
-        className="input-primary"
+        className="input input-bordered w-full max-w-xs"
         name="link"
         type="text"
-        placeholder="LinkedIn Job URL"
+        placeholder="www.linkedin.com/..."
         onChange={(e) => onLinkChange(e.target.value)}
       />
     </div>

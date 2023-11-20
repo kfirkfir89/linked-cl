@@ -11,8 +11,11 @@ const UploadFile = forwardRef<HTMLInputElement, UploadFileProps>(({ onFileSelect
   };
 
   return (
-    <div className="flex flex-col">
-      <input ref={ref} type="file" accept=".pdf" onChange={handleFileChange} className="file-input file-input-bordered file-input-success w-full max-w-xs" />
+    <div className="flex flex-col w-full max-w-xs">
+      <label className="self-start p-2 block text-sm font-medium">CV / Resume</label>
+      <div className="flex">
+        <input ref={ref} name="files" className="px-8 py-12 border-2 border-dashed rounded-md dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800" id="files" type="file" accept=".pdf" onChange={handleFileChange} />
+      </div>
     </div>
   );
 });
