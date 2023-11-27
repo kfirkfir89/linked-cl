@@ -1,23 +1,20 @@
 import path from 'path';
 import fs from 'fs';
 import fsp from 'fs/promises';
-import { Worker, parentPort, workerData } from 'worker_threads';
+import { Worker } from 'worker_threads';
 import { NextFunction, Request, Response } from 'express';
 import { v4 } from 'uuid';
-import {
-  JobInformation,
-  getJobInformation,
-} from '../../utils/getJobDescription';
-import { CoverLetter, UserUploadData } from './cover-letter.model';
-import { extractFromZip } from '../../utils/extractFromZip';
-import { jsonToText, structureText } from '../../utils/textHandlers';
+import { getJobInformation } from '../../services/puppeteer/getJobDescription';
+import { CoverLetter } from './cover-letter.model';
 import { createCoverLetter } from '../../services/chatgpt/createCoverLetter';
 import { extractJsonFromPdf } from '../../services/adobe-api/extract-json-from-pdf';
 import { IExtractWorkerData } from '../../utils/extractTextFromJsonWorker';
 import {
   PuppeteerLink,
   createPuppeteerUrl,
-} from '../../utils/createPuppeteerUrl';
+} from '../../services/puppeteer/createPuppeteerUrl';
+import { structureText } from '../../utils/extractedTextFromJson';
+import WorkerMessage from '../../interfaces/WorkerMessage';
 
 async function fsExists(filePath: string): Promise<boolean> {
   try {
@@ -32,43 +29,18 @@ async function deleteFiles(filePath: string) {
   await fsp.rm(filePath, { recursive: true });
 }
 
-async function saveCVFile(
-  file: Express.Multer.File,
-  uploadsDir: string
-): Promise<string> {
+async function saveCVFile(file: Express.Multer.File): Promise<string> {
+  const uploadsDir = path.join(__dirname, '../../../uploads');
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
-  const fileName = file.originalname.endsWith('.pdf')
-    ? file.originalname
-    : `${file.originalname}.pdf`;
-  const filePath = path.join(uploadsDir, fileName);
-  fs.writeFileSync(filePath, file.buffer);
-  return filePath;
-}
-
-async function extractedTextFromJson(outputName: string) {
-  const zipPath = path.join(
-    __dirname,
-    `../../../output-${outputName}/${outputName}.zip`
-  );
-
-  if (fs.existsSync(zipPath)) {
-    await extractFromZip(zipPath);
-
-    const jsonFIle = fs.readFileSync(
-      `output-${outputName}/structuredData.json`,
-      'utf-8'
-    );
-    const jsonObject = await JSON.parse(jsonFIle);
-    const cvText = jsonToText(jsonObject);
-    return cvText;
+  if (file.originalname.endsWith('.pdf')) {
+    const fileName = `${file.originalname + v4()}.pdf`;
+    const filePath = path.join(uploadsDir, fileName);
+    fs.writeFileSync(filePath, file.buffer);
+    return filePath;
   }
-  throw new Error('File does not exist');
-}
-interface Message {
-  type: string;
-  result?: string;
+  throw new Error('File is not pdf');
 }
 
 // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -94,7 +66,7 @@ function extractedTextFromJsonWorker(
       },
     });
 
-    worker.on('message', (message: Message) => {
+    worker.on('message', (message: WorkerMessage) => {
       if (message.result) {
         resolve(message.result);
       }
@@ -122,7 +94,6 @@ async function processPDFAndCreateCoverLetter(
   console.log(`TIMEEEEEEEEEEEEEEEEEEEEEEEEE: ${(tock - tick) / 1000} sec`);
 
   const cvText = await extractedTextFromJsonWorker('extract_text', outputName);
-  // const cvText = await extractedTextFromJson(outputName);
 
   const coverLetter = await createCoverLetter(
     cvText,
@@ -153,8 +124,7 @@ export async function generateCoverLetter(
     const jobUrl: string = req.body.url;
     try {
       const linkedInUrlDataObj = createPuppeteerUrl(jobUrl);
-      const uploadsDir = path.join(__dirname, '../../../uploads');
-      const savedCVFilePath = await saveCVFile(req.file, uploadsDir);
+      const savedCVFilePath = await saveCVFile(req.file);
       const coverLetter = await processPDFAndCreateCoverLetter(
         savedCVFilePath,
         linkedInUrlDataObj
@@ -162,7 +132,6 @@ export async function generateCoverLetter(
       res.status(200);
       res.json({ data: structureText(coverLetter.content) });
     } catch (error) {
-      console.log('errorrrrrrrrrrrrrrrrrrrrrrrrrrr:', error);
       next(error);
     }
   } else {

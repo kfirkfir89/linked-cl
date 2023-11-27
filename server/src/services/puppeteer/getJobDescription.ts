@@ -1,6 +1,6 @@
 import puppeteer, { Page } from 'puppeteer';
 import { z } from 'zod';
-import { PuppeteerLink, createPuppeteerUrl } from './createPuppeteerUrl';
+import { PuppeteerLink } from './createPuppeteerUrl';
 
 export const JobInformation = z.object({
   linkedInJobId: z.string().min(6),

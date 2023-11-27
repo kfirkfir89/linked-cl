@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import { coverLetterRouter } from './cover-letter/cover-letter.routes';
 
 const router = express.Router();
