@@ -39,7 +39,7 @@ function jsonToText(jsonObject: any) {
   return extractedText.trim();
 }
 
-export function structureText(input: string): string {
+function structureText(input: string): string {
   const lines = input.replace(/\./g, '.\n').split('\n');
 
   const structuredText = lines.join('\n');
@@ -47,7 +47,7 @@ export function structureText(input: string): string {
   return structuredText.trim();
 }
 
-export async function extractedTextFromJson(outputName: string) {
+async function extractTextFromPdfJson(outputName: string) {
   const zipPath = path.join(`output-${outputName}/${outputName}.zip`);
   if (fs.existsSync(zipPath)) {
     await extractFromZip(zipPath);
@@ -62,3 +62,5 @@ export async function extractedTextFromJson(outputName: string) {
   }
   throw new Error('File does not exist');
 }
+
+export { extractTextFromPdfJson, structureText };

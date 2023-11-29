@@ -45,7 +45,7 @@ async function scripteJobInformation(page: Page) {
   });
 }
 
-async function getJobInformation(linkedInUrlDataObj: PuppeteerLink) {
+async function getLinkedInJobInformation(linkedInUrlDataObj: PuppeteerLink) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto(linkedInUrlDataObj.url);
@@ -65,4 +65,4 @@ async function getJobInformation(linkedInUrlDataObj: PuppeteerLink) {
   return jobInformation;
 }
 
-export { getJobInformation };
+export { getLinkedInJobInformation };

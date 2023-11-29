@@ -1,7 +1,7 @@
 import { parentPort, workerData } from 'worker_threads';
-import { extractedTextFromJson } from './extractedTextFromJson';
+import { extractTextFromPdfJson } from './extractTextFromPdfJson';
 
-export interface IExtractWorkerData {
+export interface IExtractTextWorkerData {
   data: {
     path: string;
     type: string;
@@ -9,7 +9,7 @@ export interface IExtractWorkerData {
   };
 }
 
-const typedWorkerData = workerData as IExtractWorkerData;
+const typedWorkerData = workerData as IExtractTextWorkerData;
 
 (async () => {
   try {
@@ -17,7 +17,7 @@ const typedWorkerData = workerData as IExtractWorkerData;
       typedWorkerData.data.type === 'extract_text' &&
       typedWorkerData.data.outputName
     ) {
-      const result = await extractedTextFromJson(
+      const result = await extractTextFromPdfJson(
         typedWorkerData.data.outputName
       );
       parentPort?.postMessage({ type: 'extract_text', result });
