@@ -1,30 +1,41 @@
-import { parentPort, workerData } from 'worker_threads';
-import { extractTextFromPdfJson } from './extractTextFromPdfJson';
+import path from 'path';
+import { Worker } from 'worker_threads';
+import { IExtractTextWorkerData } from './extractTextFromPdfJsonWorkerTask';
+import WorkerMessage from '../interfaces/WorkerMessage';
 
-export interface IExtractTextWorkerData {
-  data: {
-    path: string;
-    type: string;
-    outputName?: string;
-  };
+function createWorker<T>(script: string, workerData: T) {
+  return new Worker(script, { workerData });
+}
+function extractTextFromPdfJsonWorker(
+  type: string,
+  outputName: string
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const workerFunction = path.resolve(
+      __dirname,
+      './extractTextFromPdfJsonWorkerTask.ts'
+    );
+    const pj = path.resolve(__dirname, './worker.import.js');
+
+    const worker = createWorker<IExtractTextWorkerData>(pj, {
+      data: {
+        path: workerFunction,
+        type,
+        outputName,
+      },
+    });
+
+    worker.on('message', (message: WorkerMessage) => {
+      if (message.result) {
+        resolve(message.result);
+      }
+      resolve('no result ');
+    });
+
+    worker.on('error', (error: Error) => {
+      reject(error);
+    });
+  });
 }
 
-const typedWorkerData = workerData as IExtractTextWorkerData;
-
-(async () => {
-  try {
-    if (
-      typedWorkerData.data.type === 'extract_text' &&
-      typedWorkerData.data.outputName
-    ) {
-      const result = await extractTextFromPdfJson(
-        typedWorkerData.data.outputName
-      );
-      parentPort?.postMessage({ type: 'extract_text', result });
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
-})();
-
-export {};
+export { extractTextFromPdfJsonWorker };

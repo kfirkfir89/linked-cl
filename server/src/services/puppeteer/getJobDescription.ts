@@ -2,7 +2,7 @@ import puppeteer, { Page } from 'puppeteer';
 import { z } from 'zod';
 import { PuppeteerLink } from './createPuppeteerUrl';
 
-export const JobInformation = z.object({
+export const JobData = z.object({
   linkedInJobId: z.string().min(6),
   url: z.string().min(10),
   title: z.string().min(1),
@@ -10,7 +10,7 @@ export const JobInformation = z.object({
   recruiter: z.string().min(1),
   description: z.string().min(10),
 });
-export type JobInformation = z.infer<typeof JobInformation>;
+export type JobData = z.infer<typeof JobData>;
 
 async function scripteJobInformation(page: Page) {
   return page.evaluate(() => {
@@ -35,7 +35,7 @@ async function scripteJobInformation(page: Page) {
 
     const cleanDescription = descriptionData.join(' ');
 
-    const job: Omit<JobInformation, 'url' | 'linkedInJobId'> = {
+    const job: Omit<JobData, 'url' | 'linkedInJobId'> = {
       title: jobRole[0].textContent?.trim() || '',
       company: company[0].textContent?.trim() || '',
       recruiter: recruiter[0].textContent?.trim() || '',
@@ -45,24 +45,25 @@ async function scripteJobInformation(page: Page) {
   });
 }
 
-async function getLinkedInJobInformation(linkedInUrlDataObj: PuppeteerLink) {
+async function getLinkedInJobData(linkedInUrlDataObj: PuppeteerLink) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto(linkedInUrlDataObj.url);
 
-  const scriptedJobInformation: Omit<JobInformation, 'url' | 'linkedInJobId'> =
+  const scriptedJobInformation: Omit<JobData, 'url' | 'linkedInJobId'> =
     await scripteJobInformation(page);
+
   if (!scriptedJobInformation) {
     throw new Error('Something went wrong try again.');
   }
 
-  const jobInformation: JobInformation = {
+  const JobDataObj: JobData = {
     ...linkedInUrlDataObj,
     ...scriptedJobInformation,
   };
 
   await browser.close();
-  return jobInformation;
+  return JobDataObj;
 }
 
-export { getLinkedInJobInformation };
+export { getLinkedInJobData };

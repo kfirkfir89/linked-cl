@@ -16,12 +16,15 @@ async function deleteFile(filePath: string) {
   await fsp.rm(filePath, { recursive: true });
 }
 async function deleteOutputFiles(fileName: string) {
-  const outputPdfJsonPath = path.join(__dirname, `../../../output-${fileName}`);
+  const outputPdfJsonPath = path.join(
+    __dirname,
+    `../../../server/output-${fileName}`
+  );
   await deleteFile(outputPdfJsonPath);
 }
 
 async function saveUploadedCVFile(file: Express.Multer.File): Promise<string> {
-  const uploadsDir = path.join(__dirname, '../../../uploads');
+  const uploadsDir = path.join(__dirname, '../../uploads');
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
@@ -34,4 +37,18 @@ async function saveUploadedCVFile(file: Express.Multer.File): Promise<string> {
   throw new Error('File is not pdf');
 }
 
-export { deleteFile, deleteOutputFiles, fsExists, saveUploadedCVFile };
+function structureText(input: string): string {
+  const lines = input.replace(/\./g, '.\n').split('\n');
+
+  const structuredText = lines.join('\n');
+
+  return structuredText.trim();
+}
+
+export {
+  deleteFile,
+  structureText,
+  deleteOutputFiles,
+  fsExists,
+  saveUploadedCVFile,
+};
