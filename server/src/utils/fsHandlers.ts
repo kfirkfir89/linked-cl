@@ -45,6 +45,11 @@ function structureText(input: string): string {
   return structuredText.trim();
 }
 
+export function structureJson(input: string): string {
+  const structured = input.replace(/[\n\r\t]/g, ' ');
+  return structured;
+}
+
 export {
   deleteFile,
   structureText,

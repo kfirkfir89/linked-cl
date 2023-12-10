@@ -13,6 +13,7 @@ import {
   deleteFile,
   saveUploadedCVFile,
   structureText,
+  structureJson,
 } from '../../utils/fsHandlers';
 import { extractTextFromPdfJsonWorker } from '../../utils/extractTextFromPdfJsonWorker';
 import { generateCoverLetterPDF } from '../../services/puppeteer/createPdfFile';
@@ -26,10 +27,7 @@ async function createCoverLetterGPT(
     JSON.stringify(jobObj)
   );
 
-  const structured = coverLetterJson
-    .replace(/\n/g, ' ')
-    .replace(/\t/g, ' ')
-    .replace(/\r/g, ' ');
+  const structured = structureJson(coverLetterJson);
 
   const cl: CoverLetter = JSON.parse(`${structured}`);
   return cl;
@@ -67,26 +65,21 @@ export async function generateCoverLetter(
     ]);
 
     const coverLetter = await createCoverLetterGPT(cvText, jobObj);
-    const formattedContent = coverLetter.content
-      .replace(/\n/g, '<br />')
-      .replace(/\. /g, '.<br />');
 
     const pdfStream = await generateCoverLetterPDF(
-      formattedContent,
+      coverLetter.content,
       outputFileName
     );
 
     res.setHeader('Content-Type', 'application/pdf');
-
     res.setHeader(
       'Content-Disposition',
       `attachment; filename=CL-${req.file.originalname}`
     );
-
-    const content = coverLetter.content.replace(/[\n\r\t]/g, ' ');
-    res.setHeader('Cover-Letter-Data', content);
+    res.setHeader('Cover-Letter-Data', structureJson(coverLetter.content));
 
     pdfStream.pipe(res);
+
     res.status(200);
     await deleteOutputFiles(outputFileName);
     await deleteFile(savedUploadedCVFilePath);

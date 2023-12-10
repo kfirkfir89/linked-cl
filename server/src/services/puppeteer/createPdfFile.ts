@@ -8,6 +8,10 @@ async function generateCoverLetterPDF(
   outputFileName: string
 ): Promise<NodeJS.ReadableStream> {
   try {
+    const formattedContent = letterContent
+      .replace(/\n/g, '<br />')
+      .replace(/\. /g, '.<br />');
+
     // Launch a new browser instance
     const browser = await puppeteer.launch({ headless: 'new' });
 
@@ -19,7 +23,7 @@ async function generateCoverLetterPDF(
     const templateContent = fs.readFileSync(templatePath, 'utf8');
 
     // Replace placeholder with actual letter content
-    const htmlContent = templateContent.replace('', letterContent);
+    const htmlContent = templateContent.replace('', formattedContent);
     // Set HTML content
     await page.setContent(htmlContent);
 
