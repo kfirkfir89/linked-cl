@@ -11,7 +11,11 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ['Cover-Letter-Data', 'Content-Disposition'],
+  })
+);
 app.use(express.json());
 
 app.use('/api/v1', api);
