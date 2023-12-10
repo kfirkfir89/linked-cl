@@ -24,6 +24,7 @@ async function createCoverLetterGPT(
     cvText,
     JSON.stringify(jobObj)
   );
+
   const structured = coverLetterJson
     .replace(/\n/g, '')
     .replace(/\t/g, '')
@@ -52,22 +53,23 @@ export async function generateCoverLetter(
   res: Response<{ data: string }>,
   next: NextFunction
 ) {
-  if (!req.file || req.file.mimetype !== 'application/pdf')
-    throw new Error('No file, or pdf not exsist');
-
   try {
+    if (!req.file) {
+      throw new Error('No file uploaded');
+    }
     const puppeteerUrl = createPuppeteerUrl(req.body.url as string);
-    const savedCVFilePath = await saveUploadedCVFile(req.file);
-    const savedCVFileName = path.basename(savedCVFilePath);
+    const savedUploadedCVFilePath = await saveUploadedCVFile(req.file);
+    const savedCVFileName = path.basename(savedUploadedCVFilePath);
 
     const [cvText, jobObj] = await Promise.all([
-      extractTextFromUploadedPdf(savedCVFilePath, savedCVFileName),
+      extractTextFromUploadedPdf(savedUploadedCVFilePath, savedCVFileName),
       getLinkedInJobData(puppeteerUrl),
     ]);
+
     const coverLetter = await createCoverLetterGPT(cvText, jobObj);
 
     await deleteOutputFiles(savedCVFileName);
-    await deleteFile(savedCVFilePath);
+    await deleteFile(savedUploadedCVFilePath);
 
     res.status(200);
     res.json({ data: structureText(coverLetter.content) });

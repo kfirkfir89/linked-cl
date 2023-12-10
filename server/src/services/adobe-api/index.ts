@@ -1,4 +1,3 @@
-import { extractJsonFromPdf } from './extract-json-from-pdf';
-import { createPdfFromJson } from './create-pdf-from-json';
+import { extractPdfContentToJson } from './extract-json-from-pdf/index';
 
-export { extractJsonFromPdf, createPdfFromJson };
+export { extractPdfContentToJson };
