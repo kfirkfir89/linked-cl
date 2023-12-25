@@ -22,7 +22,9 @@ const INITIAL_STATE: CoverLetterGeneratorState = {
 }
 const useCoverLetterGenerator = () => {
   const [state, setState] = useState<CoverLetterGeneratorState>(INITIAL_STATE);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
+  const [downloadFileName, setDownloadFileName] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
@@ -62,8 +64,21 @@ const useCoverLetterGenerator = () => {
           throw new Error(errorResult.message);
         }
     
-        const result = await response.json();
-        setContent(result.data);
+
+        const coverLetterData = response.headers.get('Cover-Letter-Data')!;
+        setContent(coverLetterData);
+
+        const contentDisposition = response.headers.get('Content-Disposition')!;
+        const parts = contentDisposition.split('=');
+        if (parts.length > 1) {
+          const fileName = parts[1].trim().replace(/"/g, '');
+          setDownloadFileName(fileName);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        setBlobUrl(url); 
+
         setState(INITIAL_STATE);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -73,7 +88,7 @@ const useCoverLetterGenerator = () => {
     }
   };
 
-  return { ...state, content, fileInputRef, handleFileSelect, handleLinkChange, handleSubmit };
+  return { ...state, blobUrl, downloadFileName, content, fileInputRef, handleFileSelect, handleLinkChange, handleSubmit };
 };
 
 export default useCoverLetterGenerator;

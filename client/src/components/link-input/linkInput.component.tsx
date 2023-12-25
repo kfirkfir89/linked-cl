@@ -5,13 +5,13 @@ interface LinkInputProps {
 
 const LinkInput = ({ onLinkChange, value }: LinkInputProps) => {
   return (
-    <div className="form-control w-full max-w-xs">
+    <div className="form-control w-full">
       <label className="label font-medium">
         <span className="label-text">LinkedIn Job URL</span>
       </label>
       <input
         value={value}
-        className="input input-bordered w-full max-w-xs"
+        className="input input-bordered w-full"
         name="link"
         type="text"
         placeholder="www.linkedin.com/..."

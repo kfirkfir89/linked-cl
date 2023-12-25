@@ -11,12 +11,18 @@ const UploadFile = forwardRef<HTMLInputElement, UploadFileProps>(({ onFileSelect
   };
 
   return (
-    <div className="flex flex-col w-full max-w-xs">
-      <label className="self-start p-2 block text-sm font-medium">CV / Resume</label>
-      <div className="flex">
-        <input ref={ref} name="files" className="px-8 py-12 border-2 border-dashed rounded-md  border-amber-500" id="files" type="file" accept=".pdf" onChange={handleFileChange} />
+    <label
+      className="flex flex-col cursor-pointer text-sm tracking-wide p-6 text-sky-500 hover:text-sky-600 w-full  border-[1px] border-sky-200 border-dashed hover:bg-gray-100 hover:border-gray-400">
+      <div className="flex flex-col items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <p className="p-2 uppercase font-semibold">CV / Resume</p>
       </div>
-    </div>
+      <input className='opacity-0 absolute w-0' ref={ref} name="files" id="files" type="file" accept=".pdf" onChange={handleFileChange} />
+    </label>
   );
 });
 
