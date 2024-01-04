@@ -62,7 +62,7 @@ const GenerateCoverLetter = () => {
         <LinkInput value={url} onLinkChange={handleLinkChange} />
         <div className="flex">
           <div className="flex-1">
-            <UploadFile ref={fileInputRef} onFileSelect={handleFileSelect} />
+            <UploadFile ref={fileInputRef} onFileSelect={handleFileSelect} type="file" accept=".pdf" />
           </div>
           <div className="flex-none">
             <button disabled={!(url && file)} onClick={handleSubmit} className="relative cursor-pointer inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-amber-400 rounded-xl group">

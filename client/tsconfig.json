@@ -8,6 +8,7 @@
       "DOM.Iterable"
     ],
     "module": "ESNext",
+    "esModuleInterop": true,
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -31,6 +32,8 @@
     "src",
     "./package.json",
     "./prettier.config.js",
+    "./jest.config.js",
+    "./jest.setup.ts"
   ],
   "references": [
     {
