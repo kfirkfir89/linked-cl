@@ -5,7 +5,8 @@ interface LinkInputProps {
 
 const LinkInput = ({ onLinkChange, value }: LinkInputProps) => {
   return (
-    <div className="form-control w-full">
+
+    <div className="card rounded-box place-items-center text-sm tracking-wide  p-6 pb-10 bg-slate-200 text-sky-600 hover:text-white w-full ">
       <label className="label font-medium">
         <span className="label-text">LinkedIn Job URL</span>
       </label>
