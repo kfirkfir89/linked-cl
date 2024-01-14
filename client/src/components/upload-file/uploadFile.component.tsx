@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, forwardRef, useState } from 'react';
+import { InputHTMLAttributes, forwardRef, memo, useState } from 'react';
 
 type UploadFileProps = {
   onFileSelect: (file: File | null) => void;
@@ -7,6 +7,7 @@ type UploadFileProps = {
 const UploadFile = forwardRef<HTMLInputElement, UploadFileProps>(({ onFileSelect, ...props }, ref) => {
 
   const [fileName, setFileName] = useState<string>('');
+
   const { accept, type } = props;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,4 +41,4 @@ const UploadFile = forwardRef<HTMLInputElement, UploadFileProps>(({ onFileSelect
   );
 });
 
-export default UploadFile;
+export default memo(UploadFile);

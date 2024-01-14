@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 
 describe('UploadFile component', () => {
   const mockOnFileSelect = jest.fn();
-  const { getByRole } = render(<UploadFile onFileSelect={mockOnFileSelect} />);
+  const { getByRole } = render(<UploadFile />);
 
   test('renders the input element', () => {
     const uploadInput = getByRole('uploadInput');
@@ -25,7 +25,7 @@ describe('UploadFile component', () => {
   });
 
   test('calls onFileSelect with the selected file', async () => {
-    const { getByRole } = render(<UploadFile onFileSelect={mockOnFileSelect} type='file' accept='.pdf' />);
+    const { getByRole } = render(<UploadFile type='file' accept='.pdf' />);
     const uploadInput = getByRole('uploadInput');
 
     const file = new File(['(⌐□_□)'], 'chucknorris.pdf', { type: 'application/pdf' });

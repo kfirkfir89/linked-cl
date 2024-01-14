@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 type GenerateButtonProps = {
   disabled: boolean;
@@ -7,6 +7,7 @@ type GenerateButtonProps = {
 };
 
 const GenerateButton: React.FC<GenerateButtonProps> = ({ disabled, isLoading, onClick }) => {
+
   return (
     <button
       disabled={disabled}
@@ -40,4 +41,4 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({ disabled, isLoading, on
   );
 };
 
-export default GenerateButton;
+export default memo(GenerateButton);
