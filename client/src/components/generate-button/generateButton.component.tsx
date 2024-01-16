@@ -12,11 +12,11 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({ disabled, isLoading, on
     <button
       disabled={disabled}
       onClick={onClick}
-      className="btn btn-ghost py-3 rounded-xl h-full w-full text-sky-600 bg-yellow-200 hover:text-yellow-200"
+      className="btn btn-ghost py-3 rounded-xl w-full text-sky-600 bg-yellow-200 hover:text-yellow-200"
     >
       <span className="w-full flex flex-col items-center justify-center">
         {isLoading ? (
-          <span className="loading loading-ring text-sky-100 w-1/2"></span>
+          <span className="loading loading-ring text-sky-500 w-10"></span>
         ) : (
           <span className="relative z-20 flex items-center text-lg">
             Generate

@@ -12,6 +12,7 @@ const LinkInput = ({ onLinkChange, value }: LinkInputProps) => {
         <span className="label-text">LinkedIn Job URL</span>
       </label>
       <input
+        id="link-input"
         value={value}
         className="input input-bordered w-full"
         name="link"

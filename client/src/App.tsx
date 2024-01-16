@@ -1,9 +1,9 @@
-import GenerateCoverLetter from './components/generate-cover-letter/generateCoverLetter.component';
+import AppContent from './AppContent';
 
 function App() {
 
   return (
-    <GenerateCoverLetter />
+    <AppContent />
   );
 }
 
