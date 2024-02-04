@@ -5,7 +5,6 @@ type UploadFileProps = {
 } & InputHTMLAttributes<HTMLInputElement>;
 
 const UploadFile = forwardRef<HTMLInputElement, UploadFileProps>(({ onFileSelect, ...props }, ref) => {
-
   const [fileName, setFileName] = useState<string>('');
 
   const { accept, type } = props;

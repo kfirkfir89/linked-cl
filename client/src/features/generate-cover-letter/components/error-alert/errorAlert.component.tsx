@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 const ErrorAlert = ({ error }: { error: string }) => {
   return (
     <>
@@ -14,4 +16,4 @@ const ErrorAlert = ({ error }: { error: string }) => {
   )
 }
 
-export default ErrorAlert;
+export default memo(ErrorAlert);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { CoverLetter } from "../../hooks/useCoverLetterGenerator";
 
 const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
@@ -34,4 +34,4 @@ const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
   )
 }
 
-export default CoverLetterContent;
+export default memo(CoverLetterContent);

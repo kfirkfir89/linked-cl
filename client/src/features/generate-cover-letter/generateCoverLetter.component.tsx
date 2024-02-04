@@ -1,12 +1,12 @@
-import LinkInput from "../link-input/linkInput.component";
-import UploadFile from "../upload-file/uploadFile.component";
+import LinkInput from "./components/link-input/linkInput.component";
+import UploadFile from "./components/upload-file/uploadFile.component";
 import useCoverLetterGenerator, { CoverLetter } from '../../hooks/useCoverLetterGenerator';
-import ErrorAlert from "../error-alert/errorAlert.component";
-import GenerateButton from "../generate-button/generateButton.component";
-import { useRef, useState } from "react";
+import ErrorAlert from "./components/error-alert/errorAlert.component";
+import GenerateButton from "./components/generate-button/generateButton.component";
+import { useCallback, useRef, useState } from "react";
 import useLinkInput from "../../hooks/useLinkInput";
 import useUploadFile from "../../hooks/useUploadFile";
-import CoverLetterContent from "../cover-letter-content/coverLetterContent.component";
+import CoverLetterContent from "./components/cover-letter-content/coverLetterContent.component";
 
 
 
@@ -26,7 +26,8 @@ const GenerateCoverLetter = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
+    console.log('handleSubmit');
     if (file === null) return;
     const cl = await generateCoverLetter(linkUrl, file);
     if (cl !== undefined) {
@@ -35,7 +36,7 @@ const GenerateCoverLetter = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
+  }, [file, linkUrl]);
 
   return (
     <>
