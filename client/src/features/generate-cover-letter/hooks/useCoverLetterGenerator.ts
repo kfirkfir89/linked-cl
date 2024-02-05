@@ -1,10 +1,5 @@
 import { useState } from 'react';
-
-export type CoverLetter  = {
-  downloadUrl: string,
-  downloadFileName: string,
-  coverLetterContent: string
-}
+import { CoverLetter } from '../../../context/coverLetterContext';
 
 function validateLinkedInUrl (linkedInUrl: string) {
   const regex = /^(https?:\/\/)?(www\.)?linkedin\.com\/.+/;

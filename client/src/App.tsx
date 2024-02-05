@@ -1,9 +1,11 @@
 import AppContent from './AppContent';
+import { CoverLetterProvider } from './context/coverLetterContext';
 
 function App() {
-
   return (
-    <AppContent />
+    <CoverLetterProvider>
+      <AppContent />
+    </CoverLetterProvider>
   );
 }
 

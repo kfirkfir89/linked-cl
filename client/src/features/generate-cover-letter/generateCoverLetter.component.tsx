@@ -1,24 +1,17 @@
 import LinkInput from "./components/link-input/linkInput.component";
 import UploadFile from "./components/upload-file/uploadFile.component";
-import useCoverLetterGenerator, { CoverLetter } from './hooks/useCoverLetterGenerator';
-import ErrorAlert from "./components/error-alert/errorAlert.component";
+import useCoverLetterGenerator from './hooks/useCoverLetterGenerator';
+import ErrorAlert from "../../components/error-alert/errorAlert.component";
 import GenerateButton from "./components/generate-button/generateButton.component";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useContext } from "react";
 import useLinkInput from "./hooks/useLinkInput";
 import useUploadFile from "./hooks/useUploadFile";
-import CoverLetterContent from "./components/cover-letter-content/coverLetterContent.component";
+import { CoverLetterContext } from "../../context/coverLetterContext";
 
 
 
 const GenerateCoverLetter = () => {
-  const [coverLetter, setCoverLetter] = useState<CoverLetter>(
-    {
-      coverLetterContent: '',
-      downloadFileName: '',
-      downloadUrl: ''
-    }
-  );
-
+  const { setCoverLetter } = useContext(CoverLetterContext);
   const { error, isLoading, generateCoverLetter } = useCoverLetterGenerator();
   const { file, handleFileSelect } = useUploadFile();
   const { linkUrl, handleLinkChange } = useLinkInput();
@@ -44,7 +37,6 @@ const GenerateCoverLetter = () => {
       <LinkInput value={linkUrl} onLinkChange={handleLinkChange} />
       <UploadFile ref={fileInputRef} onFileSelect={handleFileSelect} type="file" accept=".pdf" />
       <GenerateButton disabled={!(linkUrl && file)} onClick={handleSubmit} isLoading={isLoading} />
-      <CoverLetterContent coverLetter={coverLetter} />
     </>
   );
 }
