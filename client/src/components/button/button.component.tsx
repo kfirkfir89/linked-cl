@@ -7,8 +7,8 @@ type ButtonqProps = {
   children?: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-const Button = ({ children, ...props }: ButtonqProps) => {
-  const { className, isLoading, loadingClassName, icon } = props;
+const Button = ({ children, icon, isLoading, loadingClassName, ...props }: ButtonqProps) => {
+  const { className } = props;
   return (
     <button className={`${className}`} {...props}>
       <p className={`${isLoading ? loadingClassName : ''} flex items-center text-lg`}>
