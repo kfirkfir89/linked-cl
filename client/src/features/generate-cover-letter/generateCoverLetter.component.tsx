@@ -26,7 +26,7 @@ const GenerateCoverLetter = () => {
       handleLinkChange('');
       handleFileSelect(null);
     }
-  }, []);
+  }, [file, linkUrl]);
 
   return (
     <>

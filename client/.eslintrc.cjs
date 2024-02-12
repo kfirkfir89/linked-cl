@@ -61,4 +61,6 @@ module.exports = {
       },
     ],
   },
+  "ignorePatterns": ["__mocks__/*.js"],
+
 };

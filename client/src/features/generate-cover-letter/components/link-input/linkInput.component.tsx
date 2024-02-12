@@ -16,6 +16,7 @@ const LinkInput = ({ onLinkChange, value }: LinkInputProps) => {
         value={value}
         className="input input-bordered w-full"
         name="link"
+        role="linkedInJobURL"
         type="text"
         placeholder="www.linkedin.com/..."
         onChange={(e) => onLinkChange(e.target.value)}

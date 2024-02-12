@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef, memo, useEffect, useState } from 'react';
+import { InputHTMLAttributes, memo } from 'react';
 import { ReactComponent as UploadIcon } from '../../../../assets/upload.svg';
 
 type UploadFileProps = {
