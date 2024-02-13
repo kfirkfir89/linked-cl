@@ -5,12 +5,7 @@ const useUploadFile = () => {
   const [fileName, setFileName] = useState<string>('');
 
   useEffect(() => {
-    // setFileName(file?.name ? file?.name : '');
-    if (file) {
-      setFileName(file.name);
-    } else {
-      setFileName('');
-    }
+    setFileName(file?.name ? file?.name : '');
   }, [file]); 
 
   const handleFileSelect = useCallback((selectedFile: File | null) => {

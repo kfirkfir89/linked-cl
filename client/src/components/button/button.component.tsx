@@ -11,10 +11,10 @@ const Button = ({ children, icon, isLoading, loadingClassName, ...props }: Butto
   const { className } = props;
   return (
     <button className={`${className}`} {...props}>
-      <p className={`${isLoading ? loadingClassName : ''} flex items-center text-lg`}>
+      <div className={`${isLoading ? loadingClassName : ''} flex items-center text-lg`}>
         {children}
         {icon}
-      </p>
+      </div>
     </button>
   );
 }
