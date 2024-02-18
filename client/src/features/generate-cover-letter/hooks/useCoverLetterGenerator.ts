@@ -1,10 +1,18 @@
 import { useState } from 'react';
 import { CoverLetter } from '../../../context/coverLetterContext';
 
-function validateLinkedInUrl (linkedInUrl: string) {
+function validateLinkedInUrl(linkedInUrl: string): boolean {
   const regex = /^(https?:\/\/)?(www\.)?linkedin\.com\/.+/;
-  return regex.test(linkedInUrl);
-};
+  
+  if (!regex.test(linkedInUrl)) return false;
+
+  const parsedUrl = new URL(linkedInUrl);
+  const params = new URLSearchParams(parsedUrl.search);
+
+  if(!params.has('currentJobId')) return false;
+
+  return true;
+}
 
 function validatePdfFile(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
