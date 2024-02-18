@@ -22,7 +22,7 @@ function formatContent(content: string) {
     .replace(/\. +/g, '.\n')
     .split('\n')
     .map(line => line.trim())
-    .join('\n');
+    .join('\n')
 
   return formattedContent;
 }
@@ -33,7 +33,6 @@ const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
   useEffect(() => {
     if (coverLetter.coverLetterContent) {
       const formattedContent = formatContent(coverLetter.coverLetterContent);
-      console.log('formattedContent:', formattedContent)
       setContent(formattedContent);
     }
   }, [coverLetter.coverLetterContent]);
@@ -44,6 +43,7 @@ const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
         className="textarea textarea-bordered h-full m-6 max-h-fit"
         value={content}
         onChange={(event) => setContent(event.target.value)}
+        role="textarea-box"
       />
       <a className="btn btn-primary rounded-xl w-full py-5 pb-8 my-4" href={coverLetter.downloadUrl} download={coverLetter.downloadFileName}>
         Download Cover Letter
