@@ -1,5 +1,4 @@
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import CoverLetterContent from './coverLetterContent.component'; // Adjust the import path as necessary.
 
 const mockCoverLetter = {

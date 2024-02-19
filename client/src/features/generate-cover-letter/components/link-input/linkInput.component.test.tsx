@@ -1,6 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
 import LinkInput from './linkInput.component';
-import '@testing-library/jest-dom';
 
 describe('LinkInput component', () => {
   const mockOnLinkChange = jest.fn();
