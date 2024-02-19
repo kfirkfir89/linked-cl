@@ -1,7 +1,6 @@
 import { render, fireEvent } from '@testing-library/react';
 import UploadFile from './uploadFile.component';
-import '@testing-library/jest-dom';
-console.log(UploadFile);
+
 describe('UploadFile component', () => {
   const mockOnFileSelect = jest.fn();
   const { getByRole } = render(<UploadFile fileName='chucknorris' onFileSelect={mockOnFileSelect} />);

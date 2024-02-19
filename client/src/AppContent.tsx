@@ -2,7 +2,7 @@ import Footer from "./components/footer/footer.component";
 import Instructions from "./components/instructions/instuctions.component";
 import Title from "./components/title/title.component";
 import GenerateCoverLetter from "./features/generate-cover-letter/generateCoverLetter.component";
-import CoverLetterModal from "./features/cover-letter-content/components/coverLetterModal.component";
+import CoverLetterModal from "./features/cover-letter-content/components/cover-letter-modal/coverLetterModal.component";
 
 const AppContent = () => {
 

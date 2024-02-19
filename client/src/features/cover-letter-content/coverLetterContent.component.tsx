@@ -2,22 +2,22 @@ import { memo, useState, useEffect } from "react";
 import { CoverLetter } from "../../context/coverLetterContext";
 
 function formatContent(content: string) {
-  // Find the first and last comma
+  // find the first and last comma
   let firstCommaIndex = content.indexOf(',');
   let lastCommaIndex = content.lastIndexOf(',');
 
-  // Add a line break after the first comma
+  // add a line break after the first comma
   if (firstCommaIndex !== -1) {
     content = content.slice(0, firstCommaIndex + 1) + '\n' + content.slice(firstCommaIndex + 1);
     lastCommaIndex++; // Adjust the last comma index because we added a character
   }
 
-  // Add a line break after the last comma
+  // add a line break after the last comma
   if (lastCommaIndex !== -1) {
     content = content.slice(0, lastCommaIndex + 1) + '\n' + content.slice(lastCommaIndex + 1);
   }
 
-  // Add a line break after each period and trim leading spaces on each line
+  // add a line break after each period and trim leading spaces on each line
   let formattedContent = content
     .replace(/\. +/g, '.\n')
     .split('\n')

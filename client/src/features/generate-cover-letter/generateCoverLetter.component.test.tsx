@@ -1,4 +1,4 @@
-import { render, fireEvent, waitFor, prettyDOM } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import GenerateCoverLetter from './generateCoverLetter.component';
 import { CoverLetterContext } from '../../context/coverLetterContext';
 import useCoverLetterGenerator from './hooks/useCoverLetterGenerator';
@@ -10,6 +10,12 @@ jest.mock('./hooks/useUploadFile');
 jest.mock('./hooks/useLinkInput');
 
 describe('GenerateCoverLetter component', () => {
+  const mockCoverLetter = {
+    coverLetterContent: '',
+    downloadFileName: '',
+    downloadUrl: ''
+  };
+
   const mockSetCoverLetter = jest.fn();
   const mockGenerateCoverLetter = jest.fn();
   const mockHandleFileSelect = jest.fn();
@@ -38,11 +44,7 @@ describe('GenerateCoverLetter component', () => {
     const { getByText, getByRole } = render(
       <CoverLetterContext.Provider value={{
         setCoverLetter: mockSetCoverLetter,
-        coverLetter: {
-          coverLetterContent: '',
-          downloadFileName: '',
-          downloadUrl: ''
-        }
+        coverLetter: mockCoverLetter
       }}>
         <GenerateCoverLetter />
       </CoverLetterContext.Provider>
@@ -62,11 +64,7 @@ describe('GenerateCoverLetter component', () => {
     const { getByRole, getByText } = render(
       <CoverLetterContext.Provider value={{
         setCoverLetter: mockSetCoverLetter,
-        coverLetter: {
-          coverLetterContent: '',
-          downloadFileName: '',
-          downloadUrl: ''
-        }
+        coverLetter: mockCoverLetter
       }}>
         <GenerateCoverLetter />
       </CoverLetterContext.Provider>
@@ -101,7 +99,7 @@ describe('GenerateCoverLetter component', () => {
     }));
 
 
-    const { getByText, getByRole, container } = render(<GenerateCoverLetter />);
+    const { getByText, getByRole } = render(<GenerateCoverLetter />);
 
     const fileInput = getByRole('uploadInput') as HTMLInputElement;
     fireEvent.change(fileInput, {
@@ -126,7 +124,6 @@ describe('GenerateCoverLetter component', () => {
       const alert = getByRole('alert');
       expect(alert).toBeInTheDocument();
       expect(alert.textContent).toBe(`Warning: ${mockError}`);
-      console.log(prettyDOM(container));
     });
   });
 
