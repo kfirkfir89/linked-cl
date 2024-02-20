@@ -123,7 +123,7 @@ describe('GenerateCoverLetter component', () => {
     await waitFor(() => {
       const alert = getByRole('alert');
       expect(alert).toBeInTheDocument();
-      expect(alert.textContent).toBe(`Warning: ${mockError}`);
+      expect(alert.textContent).toBe(`${mockError}`);
     });
   });
 

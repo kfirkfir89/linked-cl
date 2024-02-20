@@ -8,19 +8,24 @@ const AppContent = () => {
 
 
   return (
-    <div className="h-full w-full bg-slate-50">
-      <div className="flex flex-col w-full h-full gap-8 items-center">
-        <Title />
-        <div className="grid grid-cols-1 md:grid-cols-7 w-full gap-6 max-w-5xl px-4">
-          <div className="md:col-span-3 ">
-            <Instructions />
+    <div className="h-full w-full">
+      <div className="h-full w-full bg-gradient-to-b from-[#0277B5] from-20%  to-teal-200 to-60%">
+        <div className="flex flex-col w-full h-full gap-8 items-center">
+          <Title />
+          <div className="grid grid-cols-1 md:grid-cols-5 w-full h-full  max-w-5xl px-4">
+            <div className="md:col-span-3 ">
+              <Instructions />
+            </div>
+            <div className="md:col-span-2 flex flex-col gap-6 h-full justify-center ">
+              <GenerateCoverLetter />
+            </div>
           </div>
-          <div className="md:col-span-4 flex flex-col gap-6">
-            <GenerateCoverLetter />
+          <CoverLetterModal />
+          <div className="h-8 flex w-full">
+            <Footer />
           </div>
+
         </div>
-        <CoverLetterModal />
-        <Footer />
       </div>
     </div>
   )

@@ -15,9 +15,12 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json',
+    // project: './tsconfig.json',
     tsconfigRootDir: __dirname,
   },
   plugins: [
@@ -61,6 +64,6 @@ module.exports = {
       },
     ],
   },
-  "ignorePatterns": ["__mocks__/*.js"],
+  "ignorePatterns": ["__mocks__/*.js", "postcss.config.js"],
 
 };
