@@ -1,24 +1,15 @@
-import letterImage from '../../assets/500px robot.jpeg';
 
 const Instructions = () => {
   return (
-    <div className='relative flex '>
-      <div className="absolute z-10 flex">
-        <img src={letterImage} className='w-44' />
-      </div>
-      <div className="card p-16 m-2 w-full rounded-box place-items-center h-full">
-        <div className="w-full flex flex-nowrap p-4 text-slate-600 items-center flex-col mx-auto space-y-4">
-          <div className='card bg-opacity-20 bg-white rounded-box place-items-center h-full w-full p-12'>
-            <h1 className="flex flex-col px-4 justify-center font-bold leading-snug text-xl ">
-              Create Your Cover Letter in 3 Easy Steps
-            </h1>
-            <div className="flex flex-col items-start gap-2  px-10 p-4 w-full max-w-sm">
-              <p className="text-sm uppercase tracking-wide text-slate-600">1. Enter the LinkedIn Job URL</p>
-              <p className="text-sm uppercase tracking-wide text-slate-600">2. Upload Your CV/Resume</p>
-              <p className="text-sm uppercase tracking-wide text-slate-600">3. Click 'Generate'</p>
-            </div>
-          </div>
-        </div>
+    <div className='flex items-center self-center flex-col container md:px-16 px-2 mb-14'>
+      <p className='px-6 pb-14 md:pb-24  max-w-3xl'>
+        Generate a Personalized Cover Letter In As Little As 5 Seconds
+        Say goodbye to the stress of writing a cover letter from scratch. Our AI-powered cover letter generator uses GPT-4 technology to create a personalized and ATS-friendly cover letter in one click. Stand out from the competition and land more job interviews.
+      </p>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-5 w-full text-center'>
+        <div className='card w-full h-full p-32 bg-white opacity-30'>1</div>
+        <div className='card w-full h-full p-32 bg-white opacity-30'>2</div>
+        <div className='card w-full h-full p-32 bg-white opacity-30'>3</div>
       </div>
     </div>
   )

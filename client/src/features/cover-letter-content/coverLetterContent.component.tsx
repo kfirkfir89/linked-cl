@@ -36,18 +36,20 @@ const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
       setContent(formattedContent);
     }
   }, [coverLetter.coverLetterContent]);
-
+  console.log('CoverLetterContent');
   return (
     <>
-      <textarea
-        className="textarea textarea-bordered h-full m-6 max-h-fit"
-        value={content}
-        onChange={(event) => setContent(event.target.value)}
-        role="textarea-box"
-      />
-      <a className="btn btn-primary rounded-xl w-full py-5 pb-8 my-4" href={coverLetter.downloadUrl} download={coverLetter.downloadFileName}>
-        Download Cover Letter
-      </a>
+      <div className="card px-4 w-full h-full rounded-box place-items-center">
+        <textarea
+          className="textarea textarea-bordered h-full m-6 w-full"
+          value={content}
+          onChange={(event) => setContent(event.target.value)}
+          role="textarea-box"
+        />
+        <a className="btn btn-primary rounded-xl py-5 pb-8 my-4" href={coverLetter.downloadUrl} download={coverLetter.downloadFileName}>
+          Download Cover Letter
+        </a>
+      </div>
     </>
   );
 }

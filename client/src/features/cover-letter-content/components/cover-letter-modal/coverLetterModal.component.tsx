@@ -1,40 +1,41 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { CoverLetterContext } from "../../../../context/coverLetterContext";
-import { ReactComponent as CloseIcon } from '../../../../assets/modalClose.svg';
 import CoverLetterContent from "../../coverLetterContent.component"
 import Button from "../../../../components/button/button.component";
+import GenerateCoverLetter from "../../../generate-cover-letter/generateCoverLetter.component";
 
 const CoverLetterModal = () => {
   const { coverLetter } = useContext(CoverLetterContext);
-  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <>
-      {
-        coverLetter.coverLetterContent &&
-        <>
-          <div role="cover-letter-modal" className="grid grid-cols-1 md:grid-cols-7 w-full gap-6 max-w-5xl px-4">
-            <div role="modal-cl-btn" className="md:col-start-4 md:col-span-4 flex flex-col gap-6">
-              <Button className="btn btn-ghost py-3 rounded-xl w-full text-sky-600 bg-yellow-200 hover:text-yellow-200" onClick={() => { setIsOpen((prev) => !prev) }}>
-                Cover Letter
-              </Button>
+    <div role="cover-letter-modal" className="flex items-center w-full h-full max-w-lg">
+      <Button
+        role="modal-cl-btn"
+        className="btn btn-ghost py-3 rounded-xl w-full text-sky-600 uppercase bg-yellow-200 hover:text-yellow-200"
+        onClick={() => (document.getElementById('my_modal_2') as HTMLDialogElement).showModal()}
+      >
+        generate
+      </Button>
+
+      <dialog role='dialog-modal' id="my_modal_2" className="modal ">
+        <div className="modal-box h-full w-11/12 max-w-7xl flex justify-center bg-opacity-85">
+          <form method="dialog">
+            <Button role='modal-close-btn' className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</Button>
+          </form>
+          <div className="flex flex-col lg:flex-row gap-6 h-full container">
+            <div className="lg:max-w-sm max-w-lg w-full self-center lg:self-start">
+              <GenerateCoverLetter />
+            </div>
+            <div className="h-full lg:w-full">
+              <CoverLetterContent coverLetter={coverLetter} />
             </div>
           </div>
-          {
-            isOpen &&
-            <div role="dialog-modal" className="absolute right-0 top-0 z-50 h-full w-full bg-black bg-opacity-20 p-20">
-              <div className="relative flex flex-col h-full w-full card rounded-box p-10 bg-slate-50">
-                <Button role="modal-close-btn" onClick={() => setIsOpen((prev) => !prev)} className="absolute top-6 right-6">
-                  <CloseIcon />
-                </Button>
-                <CoverLetterContent coverLetter={coverLetter} />
-              </div>
-            </div>
-          }
-
-        </>
-      }
-    </>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+    </div>
   )
 }
 

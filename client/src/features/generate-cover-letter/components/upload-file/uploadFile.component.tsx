@@ -24,9 +24,9 @@ const UploadFile = ({ onFileSelect, fileName, ...props }: UploadFileProps) => {
       <UploadIcon className='w-8' />
       {
         fileName ?
-          <span className="p-2  uppercase font-semibold">{fileName}</span>
+          <span className="p-2  uppercase text-center font-semibold">{fileName}</span>
           :
-          <span className="p-2 uppercase font-semibold whitespace-nowrap">CV / Resume</span>
+          <span className="p-2 uppercase text-center font-semibold whitespace-nowrap">CV / Resume</span>
 
       }
       <input role='uploadInput' id='upload-input' className='opacity-0 absolute w-0' type={type} accept={accept} onChange={handleFileChange} />

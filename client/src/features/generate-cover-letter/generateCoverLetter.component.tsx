@@ -29,10 +29,27 @@ const GenerateCoverLetter = () => {
   }, [file, linkUrl]);
 
   return (
-    <>
+    <div className="card px-4 w-full gap-5 mt-5 rounded-box place-items-center h-full">
       {error && <ErrorAlert error={error} />}
-      <LinkInput value={linkUrl} onLinkChange={handleLinkChange} />
-      <UploadFile fileName={fileName} onFileSelect={handleFileSelect} type="file" accept=".pdf" />
+      <LinkInput
+        id="link-input"
+        role="linkedInJobURL"
+        type="text"
+        className="input input-bordered w-full"
+        value={linkUrl}
+        onLinkChange={handleLinkChange}
+        name="link"
+        placeholder="www.linkedin.com/..."
+      />
+      <UploadFile
+        role='uploadInput'
+        id='upload-input'
+        className='opacity-0 absolute w-0'
+        fileName={fileName}
+        onFileSelect={handleFileSelect}
+        type="file"
+        accept=".pdf"
+      />
       <Button
         className="btn btn-ghost py-3 rounded-xl w-full text-sky-600 bg-yellow-200 hover:text-yellow-200"
         disabled={!(linkUrl && file)}
@@ -43,7 +60,7 @@ const GenerateCoverLetter = () => {
         generate
         <GenerateIcon className="w-5" />
       </Button>
-    </>
+    </div>
   );
 }
 
