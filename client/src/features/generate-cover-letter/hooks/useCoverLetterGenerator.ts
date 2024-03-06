@@ -87,6 +87,7 @@ const useCoverLetterGenerator = () => {
         }
 
         const coverLetter = await constructCoverLetter(response);
+        
         setIsLoading(false);
         return coverLetter;
       } catch (error) {

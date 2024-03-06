@@ -5,7 +5,7 @@ const useUploadFile = () => {
   const [fileName, setFileName] = useState<string>('');
 
   useEffect(() => {
-    setFileName(file?.name ? file?.name : '');
+    setFileName(file?.name ? file.name : 'CV / Resume');
   }, [file]); 
 
   const handleFileSelect = useCallback((selectedFile: File | null) => {

@@ -4,8 +4,9 @@ const useLinkInput = () => {
   const [linkUrl, setLinkUrl] = useState<string>('');
 
   const handleLinkChange = useCallback((link: string) => {
-    setLinkUrl(link);
-  }, []);
+    console.log('link:', link)
+    setLinkUrl(() => link);
+  }, [linkUrl]);
   
   return { linkUrl, handleLinkChange };
 }

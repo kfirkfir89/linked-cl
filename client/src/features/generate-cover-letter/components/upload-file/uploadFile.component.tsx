@@ -1,13 +1,12 @@
-import { InputHTMLAttributes, memo } from 'react';
+import { InputHTMLAttributes, forwardRef, memo } from 'react';
 import { ReactComponent as UploadIcon } from '../../../../assets/upload.svg';
 
 type UploadFileProps = {
   fileName: string,
-  onFileSelect: (file: File | null) => void;
+  onFileSelect: (File: File | null) => void;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-const UploadFile = ({ onFileSelect, fileName, ...props }: UploadFileProps) => {
-
+const UploadFile = forwardRef(({ onFileSelect, fileName, ...props }: UploadFileProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   const { accept, type } = props;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,9 +28,9 @@ const UploadFile = ({ onFileSelect, fileName, ...props }: UploadFileProps) => {
           <span className="p-2 uppercase text-center font-semibold whitespace-nowrap">CV / Resume</span>
 
       }
-      <input role='uploadInput' id='upload-input' className='opacity-0 absolute w-0' type={type} accept={accept} onChange={handleFileChange} />
+      <input ref={ref} id='upload-input' className='opacity-0 absolute w-0' type={type} accept={accept} onChange={handleFileChange} {...props} />
     </label>
   );
-};
+});
 
 export default memo(UploadFile);

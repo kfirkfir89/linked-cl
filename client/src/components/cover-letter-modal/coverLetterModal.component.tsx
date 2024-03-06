@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { CoverLetterContext } from "../../../../context/coverLetterContext";
-import CoverLetterContent from "../../coverLetterContent.component"
-import Button from "../../../../components/button/button.component";
-import GenerateCoverLetter from "../../../generate-cover-letter/generateCoverLetter.component";
+import { CoverLetterContext } from "../../context/coverLetterContext";
+import CoverLetterContent from "../../features/cover-letter-content/coverLetterContent.component"
+import Button from "../button/button.component";
+import GenerateCoverLetter from "../../features/generate-cover-letter/generateCoverLetter.component";
 
 const CoverLetterModal = () => {
   const { coverLetter } = useContext(CoverLetterContext);

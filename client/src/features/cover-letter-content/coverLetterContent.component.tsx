@@ -32,11 +32,12 @@ const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
 
   useEffect(() => {
     if (coverLetter.coverLetterContent) {
+      console.log('coverLetter:', coverLetter)
       const formattedContent = formatContent(coverLetter.coverLetterContent);
       setContent(formattedContent);
     }
   }, [coverLetter.coverLetterContent]);
-  console.log('CoverLetterContent');
+
   return (
     <>
       <div className="card px-4 w-full h-full rounded-box place-items-center">
@@ -46,9 +47,12 @@ const CoverLetterContent = ({ coverLetter }: { coverLetter: CoverLetter }) => {
           onChange={(event) => setContent(event.target.value)}
           role="textarea-box"
         />
-        <a className="btn btn-primary rounded-xl py-5 pb-8 my-4" href={coverLetter.downloadUrl} download={coverLetter.downloadFileName}>
-          Download Cover Letter
-        </a>
+        {
+          coverLetter.downloadUrl &&
+          <a className="btn btn-primary rounded-xl py-5 pb-8 my-4" href={coverLetter.downloadUrl} download={coverLetter.downloadFileName}>
+            Download Cover Letter
+          </a>
+        }
       </div>
     </>
   );

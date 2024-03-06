@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { CoverLetterContext } from '../../../../context/coverLetterContext';
+import { CoverLetterContext } from '../../context/coverLetterContext';
 import CoverLetterModal from './coverLetterModal.component';
 
 describe('CoverLetterModal component', () => {

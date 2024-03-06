@@ -2,7 +2,7 @@ import LinkInput from "./components/link-input/linkInput.component";
 import UploadFile from "./components/upload-file/uploadFile.component";
 import useCoverLetterGenerator from './hooks/useCoverLetterGenerator';
 import ErrorAlert from "../../components/error-alert/errorAlert.component";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useRef } from "react";
 import useLinkInput from "./hooks/useLinkInput";
 import useUploadFile from "./hooks/useUploadFile";
 import { CoverLetterContext } from "../../context/coverLetterContext";
@@ -16,22 +16,33 @@ const GenerateCoverLetter = () => {
   const { file, fileName, handleFileSelect } = useUploadFile();
   const { linkUrl, handleLinkChange } = useLinkInput();
 
+  const uploadFileRef = useRef<HTMLInputElement>(null);
+  const inputLinkRef = useRef<HTMLInputElement>(null);
+
   const handleSubmit = useCallback(async () => {
     if (file === null) return;
 
     const cl = await generateCoverLetter(linkUrl, file);
 
-    if (cl !== undefined) {
+    if (cl) {
       setCoverLetter(cl);
       handleLinkChange('');
       handleFileSelect(null);
+      if (uploadFileRef.current) {
+        uploadFileRef.current.value = '';
+      }
+      if (inputLinkRef.current) {
+        inputLinkRef.current.value = '';
+      }
     }
-  }, [file, linkUrl]);
+
+  }, [file, linkUrl, fileName]);
 
   return (
     <div className="card px-4 w-full gap-5 mt-5 rounded-box place-items-center h-full">
       {error && <ErrorAlert error={error} />}
       <LinkInput
+        ref={inputLinkRef}
         id="link-input"
         role="linkedInJobURL"
         type="text"
@@ -42,6 +53,7 @@ const GenerateCoverLetter = () => {
         placeholder="www.linkedin.com/..."
       />
       <UploadFile
+        ref={uploadFileRef}
         role='uploadInput'
         id='upload-input'
         className='opacity-0 absolute w-0'
