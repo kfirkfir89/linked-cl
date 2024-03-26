@@ -1,13 +1,13 @@
 import { ButtonHTMLAttributes } from "react";
 
-type ButtonqProps = {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   loadingClassName?: string;
   icon?: React.ReactNode;
   children?: React.ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+};
 
-const Button = ({ children, icon, isLoading, loadingClassName, ...props }: ButtonqProps) => {
+const Button = ({ children, icon, isLoading, loadingClassName, ...props }: ButtonProps) => {
   const { className } = props;
   return (
     <button className={`${className}`} {...props}>

@@ -1,10 +1,10 @@
 import { InputHTMLAttributes, forwardRef, memo } from 'react';
 import { ReactComponent as UploadIcon } from '../../../../assets/upload.svg';
 
-type UploadFileProps = {
+interface UploadFileProps extends InputHTMLAttributes<HTMLInputElement> {
   fileName: string,
   onFileSelect: (File: File | null) => void;
-} & InputHTMLAttributes<HTMLInputElement>;
+}
 
 const UploadFile = forwardRef(({ onFileSelect, fileName, ...props }: UploadFileProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   const { accept, type } = props;
@@ -19,7 +19,7 @@ const UploadFile = forwardRef(({ onFileSelect, fileName, ...props }: UploadFileP
 
   return (
     <label
-      className="flex flex-col cursor-pointer text-sm tracking-wide card rounded-box place-items-center p-10 bg-slate-200 text-sky-600 hover:text-white w-full  hover:bg-slate-300">
+      className="flex flex-col cursor-pointer text-sm tracking-wide card rounded-box place-items-center p-10 bg-slate-300 text-sky-600 hover:text-white w-full  hover:bg-slate-300">
       <UploadIcon className='w-8' />
       {
         fileName ?
