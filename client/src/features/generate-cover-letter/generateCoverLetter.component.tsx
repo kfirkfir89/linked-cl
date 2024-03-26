@@ -19,6 +19,17 @@ const GenerateCoverLetter = () => {
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const inputLinkRef = useRef<HTMLInputElement>(null);
 
+  const resetForm = () => {
+    handleLinkChange('');
+    handleFileSelect(null);
+    if (uploadFileRef.current) {
+      uploadFileRef.current.value = '';
+    }
+    if (inputLinkRef.current) {
+      inputLinkRef.current.value = '';
+    }
+  }
+
   const handleSubmit = useCallback(async () => {
     if (file === null) return;
 
@@ -26,17 +37,10 @@ const GenerateCoverLetter = () => {
 
     if (cl) {
       setCoverLetter(cl);
-      handleLinkChange('');
-      handleFileSelect(null);
-      if (uploadFileRef.current) {
-        uploadFileRef.current.value = '';
-      }
-      if (inputLinkRef.current) {
-        inputLinkRef.current.value = '';
-      }
+      resetForm();
     }
 
-  }, [file, linkUrl, fileName]);
+  }, [file, linkUrl]);
 
   return (
     <div className="card px-4 w-full gap-5 mt-5 rounded-box place-items-center h-full">
